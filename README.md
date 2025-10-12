@@ -6,7 +6,7 @@ Projekt na ten moment rozważany jest w wariancie technicznym:
 ## SSR z użyciem:
 - Go, 
 - Templ,
-- HTMX,
+- Htmx,
 - Alpine.js
 - Tailwind CSS,
 
