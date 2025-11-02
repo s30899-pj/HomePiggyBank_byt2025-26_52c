@@ -14,11 +14,11 @@ test:
 
 .PHONY: tailwind-watch
 tailwind-watch:
-	./tailwindcss -i ./web/static/css/input.css -o ./web/static/css/style.css --watch
+	./tailwindcss -i ./web/input.css -o ./web/static/css/style.css --watch
 
 .PHONY: tailwind-build
 tailwind-build:
-	./tailwindcss -i ./web/static/css/input.css -o ./web/static/css/style.min.css --minify
+	./tailwindcss -i ./web/input.css -o ./web/static/css/style.min.css --minify
 
 .PHONY: templ-watch
 templ-watch:
