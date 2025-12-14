@@ -1,8 +1,80 @@
 package main
 
-import "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/infra/db"
+import (
+	"context"
+	"errors"
+	"log/slog"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/config"
+	//database "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store/db"
+	//"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store/dbstore"
+)
 
 func main() {
-	db.Init()
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	r := chi.NewRouter()
 
+	cfg := config.MustLoadConfig()
+
+	//db := database.MustOpen(cfg.DatabaseName)
+
+	//userStore := dbstore.NewUserStore(
+	//	dbstore.NewUserStoreParams{
+	//		DB: db,
+	//	},
+	//)
+	//
+	//sessionStore := dbstore.NewSessionStore(
+	//	dbstore.NewSessionStoreParams{
+	//		DB: db,
+	//	},
+	//)
+
+	fileServer := http.FileServer(http.Dir("./web/static"))
+	r.Handle("/static/", http.StripPrefix("/static/", fileServer))
+
+	r.Group(func(r chi.Router) {
+
+	})
+
+	killSig := make(chan os.Signal, 1)
+
+	signal.Notify(killSig, os.Interrupt, syscall.SIGTERM)
+
+	srv := &http.Server{
+		Addr:    cfg.Port,
+		Handler: r,
+	}
+
+	go func() {
+		err := srv.ListenAndServe()
+
+		if errors.Is(err, http.ErrServerClosed) {
+			logger.Info("Server shutdown complete")
+		} else if err != nil {
+			logger.Error("Server error", slog.Any("err", err))
+			os.Exit(1)
+		}
+	}()
+
+	logger.Info("Server started", slog.String("port", cfg.Port))
+	<-killSig
+
+	logger.Info("Shutting down server")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		logger.Error("Server shoutdown failed", slog.Any("err", err))
+		os.Exit(1)
+	}
+
+	logger.Info("Server shutdown complete")
 }
