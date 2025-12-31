@@ -11,11 +11,11 @@ type Session struct {
 	ID        uint   `gorm:"primaryKey" json:"id"`
 	SessionID string `json:"session_id"`
 	UserID    uint   `json:"user_id"`
-	User      User   `gorm:"foreignKey:UserID" json:"User"`
+	User      User   `gorm:"foreignKey:UserID" json:"user"`
 }
 
 type UserStore interface {
-	CreateUSer(username string, email string, password string) error
+	CreateUser(username string, email string, password string) error
 	GetUser(username string, email string) (*User, error)
 }
 

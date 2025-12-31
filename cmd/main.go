@@ -10,10 +10,14 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/basic"
+	m "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/middleware"
+
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/config"
-	//database "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store/db"
-	//"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store/dbstore"
+	database "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store/db"
+	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store/dbstore"
 )
 
 func main() {
@@ -22,25 +26,34 @@ func main() {
 
 	cfg := config.MustLoadConfig()
 
-	//db := database.MustOpen(cfg.DatabaseName)
+	db := database.MustOpen(cfg.DatabaseName)
 
 	//userStore := dbstore.NewUserStore(
 	//	dbstore.NewUserStoreParams{
 	//		DB: db,
 	//	},
 	//)
-	//
-	//sessionStore := dbstore.NewSessionStore(
-	//	dbstore.NewSessionStoreParams{
-	//		DB: db,
-	//	},
-	//)
+
+	sessionStore := dbstore.NewSessionStore(
+		dbstore.NewSessionStoreParams{
+			DB: db,
+		},
+	)
 
 	fileServer := http.FileServer(http.Dir("./web/static"))
-	r.Handle("/static/", http.StripPrefix("/static/", fileServer))
+	r.Get("/static/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "public, max-age=31536000")
+		http.StripPrefix("/static/", fileServer).ServeHTTP(w, r)
+	}))
+	authMiddleware := m.NewAuthMiddleware(sessionStore, cfg.SessionCookieName)
 
 	r.Group(func(r chi.Router) {
+		r.Use(
+			middleware.Logger,
+			authMiddleware.AddUserToContext,
+		)
 
+		r.Get("/", basic.NewBasicHandler().Index)
 	})
 
 	killSig := make(chan os.Signal, 1)
