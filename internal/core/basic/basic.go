@@ -14,7 +14,7 @@ func NewBasicHandler() *BasicHandler {
 
 func (h *BasicHandler) Index(w http.ResponseWriter, r *http.Request) {
 	c := templ.Index()
-	err := templ.Layout(c, "Welcome in Home Piggy Bank").Render(r.Context(), w)
+	err := templ.Layout(c, "Welcome to Home Piggy Bank").Render(r.Context(), w)
 
 	if err != nil {
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)

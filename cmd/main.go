@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/auth"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/basic"
 	m "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/middleware"
 
@@ -54,6 +55,10 @@ func main() {
 		)
 
 		r.Get("/", basic.NewBasicHandler().Index)
+
+		r.Get("/login", auth.NewAuthHandler().GetLogin)
+
+		r.Get("/register", auth.NewAuthHandler().GetRegister)
 	})
 
 	killSig := make(chan os.Signal, 1)

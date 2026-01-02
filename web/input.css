@@ -37,3 +37,4 @@
     /* border radius */
     --radius-radius: var(--radius-sm);
 }
+@plugin "@tailwindcss/typography";
