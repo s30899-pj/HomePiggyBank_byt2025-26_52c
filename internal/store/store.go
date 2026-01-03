@@ -49,6 +49,28 @@ type UserStore interface {
 	GetUser(username string, email string) (*User, error)
 }
 
+type ExpensesStore interface {
+	// CreateExpense TODO: check
+	CreateExpense(amount float32, category string, date time.Time) error
+	GetExpense(amount float32, category string, date time.Time) (*Expenses, error)
+}
+
+type HouseholdsStore interface {
+	CreateHousehold(householdsName string, date time.Time) error
+	GetHousehold(householdsName string, date time.Time) (*Households, error)
+}
+
+type MembershipStore interface {
+	// CreateMembership TODO: check
+	CreateMembership(user User, households Households) error
+	GetMembership(user User, households Households) (*Membership, error)
+}
+
+type ReportStore interface {
+	CreateReport(periodOfDates time.Time, totalExpenses float32, generationDate time.Time) error
+	GetReport(periodOfDates time.Time, totalExpenses float32, generationDate time.Time) (*Report, error)
+}
+
 type SessionStore interface {
 	CreateSession(session *Session) (*Session, error)
 	GetUserFromSession(sessionID string, userID string) (*User, error)
