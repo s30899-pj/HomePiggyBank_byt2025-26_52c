@@ -9,32 +9,32 @@ type User struct {
 	Password string `json:"-"`
 }
 
-type Expenditure struct {
+type Expenses struct {
 	ID       uint      `gorm:"primaryKey" json:"id"`
 	Amount   float32   `json:"amount"`
 	Category string    `json:"category"`
 	Date     time.Time `json:"date"`
 	//UserID    uint   `json:"user_id"`
-	//GroupID    uint   `json:"group_id"`
+	//HouseholdsID    uint   `json:"households_id"`
 }
 
-type Group struct {
-	ID        uint      `gorm:"primaryKey" json:"id"`
-	GroupName string    `json:"group_name"`
-	Date      time.Time `json:"date"`
+type Households struct {
+	ID             uint      `gorm:"primaryKey" json:"id"`
+	HouseholdsName string    `json:"households_name"`
+	Date           time.Time `json:"date"`
 }
 
 type Membership struct {
 	ID uint `gorm:"primaryKey" json:"id"`
 	//UserID    uint   `json:"user_id"`
-	//GroupID    uint   `json:"group_id"`
+	//HouseholdsID    uint   `json:"households_id"`
 }
 
 type Report struct {
-	ID               uint      `gorm:"primaryKey" json:"id"`
-	PeriodOfDates    time.Time `json:"period_of_dates"`
-	TotalExpenditure float32   `json:"total_expenditure"`
-	GenerationDate   time.Time `json:"GenerationDate"`
+	ID             uint      `gorm:"primaryKey" json:"id"`
+	PeriodOfDates  time.Time `json:"period_of_dates"`
+	TotalExpenses  float32   `json:"total_expenses"`
+	GenerationDate time.Time `json:"GenerationDate"`
 }
 
 type Session struct {
