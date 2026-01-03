@@ -156,15 +156,15 @@ templ appShell(content templ.Component) {
 }
 
 templ Layout(content templ.Component, title string) {
-	<!DOCTYPE html>
-	@header(title)
-	<body class="bg-surface dark:bg-surface-dark">
-		if middleware.GetUser(ctx) != nil {
-			@appShell(content)
-		} else {
-			<main class="flex items-center justify-center min-h-screen p-4">
-				@content
-			</main>
-		}
-	</body>
+    <!DOCTYPE html>
+    @header(title)
+    <body class="bg-surface dark:bg-surface-dark">
+        if middleware.GetUser(ctx) != nil {
+            @appShell(content)
+        } else {
+            <main class="flex items-center justify-center min-h-screen p-4">
+                @content
+            </main>
+        }
+    </body>
 }

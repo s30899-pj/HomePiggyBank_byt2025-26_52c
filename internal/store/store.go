@@ -46,7 +46,7 @@ type Session struct {
 
 type UserStore interface {
 	CreateUser(username string, email string, password string) error
-	GetUser(username string, email string) (*User, error)
+	GetUser(email string) (*User, error)
 }
 
 type ExpensesStore interface {

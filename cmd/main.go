@@ -12,6 +12,7 @@ import (
 
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/auth"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/basic"
+	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/hash/passwordhash"
 	m "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/middleware"
 
 	"github.com/go-chi/chi/v5"
@@ -29,11 +30,14 @@ func main() {
 
 	db := database.MustOpen(cfg.DatabaseName)
 
-	//userStore := dbstore.NewUserStore(
-	//	dbstore.NewUserStoreParams{
-	//		DB: db,
-	//	},
-	//)
+	passwordhash := passwordhash.NewHPasswordHash()
+
+	userStore := dbstore.NewUserStore(
+		dbstore.NewUserStoreParams{
+			DB:           db,
+			PasswordHash: passwordhash,
+		},
+	)
 
 	sessionStore := dbstore.NewSessionStore(
 		dbstore.NewSessionStoreParams{
@@ -56,9 +60,14 @@ func main() {
 
 		r.Get("/", basic.NewBasicHandler().Index)
 
+		r.Get("/register", auth.NewAuthHandler().GetRegister)
+
+		r.Post("/register", auth.NewPostRegisterHandler(auth.PostRegisterHandlerParams{
+			UserStore: userStore,
+		}).PostRegister)
+
 		r.Get("/login", auth.NewAuthHandler().GetLogin)
 
-		r.Get("/register", auth.NewAuthHandler().GetRegister)
 	})
 
 	killSig := make(chan os.Signal, 1)

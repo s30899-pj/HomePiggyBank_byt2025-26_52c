@@ -1,29 +1,38 @@
 package dbstore
 
 import (
+	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/hash"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store"
 	"gorm.io/gorm"
 )
 
 type UserStore struct {
-	db *gorm.DB
+	db           *gorm.DB
+	passwordHash hash.PasswordHash
 }
 
 type NewUserStoreParams struct {
-	DB *gorm.DB
+	DB           *gorm.DB
+	PasswordHash hash.PasswordHash
 }
 
 func NewUserStore(params NewUserStoreParams) *UserStore {
 	return &UserStore{
-		db: params.DB,
+		db:           params.DB,
+		passwordHash: params.PasswordHash,
 	}
 }
 
 func (s *UserStore) CreateUser(username string, email string, password string) error {
+	hashedPassword, err := s.passwordHash.GenerateFromPassword(password)
+	if err != nil {
+		return err
+	}
+
 	return s.db.Create(&store.User{
 		Username: username,
 		Email:    email,
-		Password: password,
+		Password: hashedPassword,
 	}).Error
 }
 
