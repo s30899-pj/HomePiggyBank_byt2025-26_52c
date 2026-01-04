@@ -5,6 +5,7 @@ import (
 
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/templ"
+	templAlerts "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/templ/alerts"
 )
 
 type AuthHandler struct{}
@@ -13,6 +14,8 @@ func NewAuthHandler() *AuthHandler {
 	return &AuthHandler{}
 }
 
+// TODO: add usage of alert from register page
+// TODO: add alerts for wrong email address or password
 func (h *AuthHandler) GetLogin(w http.ResponseWriter, r *http.Request) {
 	c := templ.Login()
 	err := templ.Layout(c, "Log in").Render(r.Context(), w)
@@ -47,6 +50,9 @@ func NewPostRegisterHandler(params PostRegisterHandlerParams) *PostRegisterHandl
 	}
 }
 
+// TODO: add verification for existing email address or username
+// TODO: add alerts for an existing email address or username
+// TODO: prepare alert templates for universal use
 func (h *PostRegisterHandler) PostRegister(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	email := r.FormValue("email")
@@ -56,7 +62,18 @@ func (h *PostRegisterHandler) PostRegister(w http.ResponseWriter, r *http.Reques
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		c := templAlerts.RegisterError()
+		err := c.Render(r.Context(), w)
 
+		if err != nil {
+			http.Error(w, "Error rendering Alert", http.StatusInternalServerError)
+			return
+		}
+
+		return
 	}
 
+	w.Header().Set("HX-Redirect", "/login")
 }
+
+// TODO: implement login post

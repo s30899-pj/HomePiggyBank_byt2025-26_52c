@@ -68,6 +68,7 @@ func main() {
 
 		r.Get("/login", auth.NewAuthHandler().GetLogin)
 
+		// TODO: add logout route
 	})
 
 	killSig := make(chan os.Signal, 1)

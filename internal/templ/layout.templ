@@ -8,6 +8,7 @@ templ header(title string) {
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<script src="/static/script/htmx.min.js"></script>
+		<script src="/static/script/response-targets.js"></script>
 		<script defer src="/static/script/alpine-focus.min.js"></script>
 		<script defer src="/static/script/alpine.min.js"></script>
 		// <link rel="stylesheet" href="/web/static/css/style.min.css"/>
@@ -156,15 +157,15 @@ templ appShell(content templ.Component) {
 }
 
 templ Layout(content templ.Component, title string) {
-    <!DOCTYPE html>
-    @header(title)
-    <body class="bg-surface dark:bg-surface-dark">
-        if middleware.GetUser(ctx) != nil {
-            @appShell(content)
-        } else {
-            <main class="flex items-center justify-center min-h-screen p-4">
-                @content
-            </main>
-        }
-    </body>
+	<!DOCTYPE html>
+	@header(title)
+	<body class="bg-surface dark:bg-surface-dark">
+		if middleware.GetUser(ctx) != nil {
+			@appShell(content)
+		} else {
+			<main class="flex items-center justify-center min-h-screen p-4">
+				@content
+			</main>
+		}
+	</body>
 }

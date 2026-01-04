@@ -1,0 +1,30 @@
+package templ
+
+templ RegisterError() {
+	<div class="relative w-full overflow-hidden rounded-sm border border-red-500 bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark" role="alert">
+		<div class="flex w-full items-center gap-2 bg-danger/10 p-4">
+			<div class="bg-red-500/15 text-red-500 rounded-full p-1" aria-hidden="true">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6" aria-hidden="true">
+					<path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z" clip-rule="evenodd"></path>
+				</svg>
+			</div>
+			<div class="ml-2 flex-1">
+				<h3 class="text-sm font-semibold text-danger">
+					Registration failed
+				</h3>
+				<p class="text-xs font-medium sm:text-sm">
+					There was a problem creating your account. Please check your details and try again.
+				</p>
+			</div>
+			<button
+				type="button"
+				class="ml-auto"
+				hx-on="click: this.closest('#global-flash').innerHTML = ''"
+				aria-label="Dismiss registration error">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="2.5" class="size-4 shrink-0">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+				</svg>
+			</button>
+		</div>
+	</div>
+}
