@@ -1,6 +1,6 @@
 package templ
 
-templ RegisterSuccess() {
+templ Success(title string, description string) {
 	<div class="relative w-full overflow-hidden rounded-sm border border-green-500 bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark" role="alert">
 		<div class="flex w-full items-center gap-2 bg-success/10 p-4">
 			<div class="bg-green-500/15 text-green-500 rounded-full p-1">
@@ -10,9 +10,11 @@ templ RegisterSuccess() {
 			</div>
 			<div class="ml-2">
 				<h3 class="text-sm font-semibold text-success">
+				    { title }
 					Account created successfully
 				</h3>
 				<p class="text-xs font-medium sm:text-sm">
+				    { description }
 					You can now log in using your email and password.
 				</p>
 			</div>

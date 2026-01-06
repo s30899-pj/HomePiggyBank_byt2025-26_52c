@@ -21,9 +21,9 @@ func NewAuthMiddleware(sessionStore store.SessionStore, sessionCookieName string
 	}
 }
 
-type UserContextKey string
+type userContextKeyType struct{}
 
-var UserKey UserContextKey = "user"
+var userContextKey = userContextKeyType{}
 
 func (m *AuthMiddleware) AddUserToContext(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -58,18 +58,18 @@ func (m *AuthMiddleware) AddUserToContext(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), UserKey, user)
+		ctx := context.WithValue(r.Context(), userContextKey, user)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
 func GetUser(ctx context.Context) *store.User {
-	user := ctx.Value(UserKey)
+	user, ok := ctx.Value(userContextKey).(*store.User)
 
-	if user == nil {
+	if !ok {
 		return nil
 	}
 
-	return user.(*store.User)
+	return user
 }

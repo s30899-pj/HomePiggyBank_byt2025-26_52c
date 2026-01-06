@@ -68,7 +68,16 @@ func main() {
 
 		r.Get("/login", auth.NewAuthHandler().GetLogin)
 
-		// TODO: add logout route
+		r.Post("/login", auth.NewPostLoginHandler(auth.PostLoginHandlerParams{
+			UserStore:         userStore,
+			SessionStore:      sessionStore,
+			PasswordHash:      passwordhash,
+			SessionCookieName: cfg.SessionCookieName,
+		}).PostLogin)
+
+		r.Post("/logout", auth.NewPostLogoutHandler(auth.PostLogoutHandlerParams{
+			SessionCookieName: cfg.SessionCookieName,
+		}).PostLogout)
 	})
 
 	killSig := make(chan os.Signal, 1)

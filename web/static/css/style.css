@@ -41,6 +41,7 @@
       --tw-backdrop-saturate: initial;
       --tw-backdrop-sepia: initial;
       --tw-duration: initial;
+      --tw-content: "";
     }
   }
 }
@@ -96,6 +97,7 @@
     --color-primary: var(--color-black);
     --color-on-primary: var(--color-neutral-100);
     --color-outline: var(--color-neutral-300);
+    --color-outline-strong: var(--color-neutral-800);
     --color-surface-dark: var(--color-neutral-950);
     --color-surface-dark-alt: var(--color-neutral-900);
     --color-on-surface-dark: var(--color-neutral-300);
@@ -103,6 +105,7 @@
     --color-primary-dark: var(--color-white);
     --color-on-primary-dark: var(--color-black);
     --color-outline-dark: var(--color-neutral-700);
+    --color-outline-dark-strong: var(--color-neutral-300);
     --color-success: var(--color-green-500);
     --color-danger: var(--color-red-500);
     --radius-radius: var(--radius-sm);
@@ -251,8 +254,14 @@
   }
 }
 @layer utilities {
+  .pointer-events-none {
+    pointer-events: none;
+  }
   .collapse {
     visibility: collapse;
+  }
+  .invisible {
+    visibility: hidden;
   }
   .visible {
     visibility: visible;
@@ -385,6 +394,10 @@
   .table {
     display: table;
   }
+  .size-3 {
+    width: calc(var(--spacing) * 3);
+    height: calc(var(--spacing) * 3);
+  }
   .size-4 {
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);
@@ -496,6 +509,9 @@
   }
   .resize {
     resize: both;
+  }
+  .appearance-none {
+    appearance: none;
   }
   .flex-col {
     flex-direction: column;
@@ -829,6 +845,36 @@
     --tw-duration: 300ms;
     transition-duration: 300ms;
   }
+  .peer-checked\:visible {
+    &:is(:where(.peer):checked ~ *) {
+      visibility: visible;
+    }
+  }
+  .before\:absolute {
+    &::before {
+      content: var(--tw-content);
+      position: absolute;
+    }
+  }
+  .before\:inset-0 {
+    &::before {
+      content: var(--tw-content);
+      inset: calc(var(--spacing) * 0);
+    }
+  }
+  .checked\:border-primary {
+    &:checked {
+      border-color: var(--color-primary);
+    }
+  }
+  .checked\:before\:bg-primary {
+    &:checked {
+      &::before {
+        content: var(--tw-content);
+        background-color: var(--color-primary);
+      }
+    }
+  }
   .hover\:bg-primary\/5 {
     &:hover {
       @media (hover: hover) {
@@ -870,6 +916,29 @@
       }
     }
   }
+  .focus\:outline-2 {
+    &:focus {
+      outline-style: var(--tw-outline-style);
+      outline-width: 2px;
+    }
+  }
+  .focus\:outline-offset-2 {
+    &:focus {
+      outline-offset: 2px;
+    }
+  }
+  .focus\:outline-outline-strong {
+    &:focus {
+      outline-color: var(--color-outline-strong);
+    }
+  }
+  .checked\:focus\:outline-primary {
+    &:checked {
+      &:focus {
+        outline-color: var(--color-primary);
+      }
+    }
+  }
   .focus-visible\:underline {
     &:focus-visible {
       text-decoration-line: underline;
@@ -908,6 +977,21 @@
   }
   .disabled\:opacity-75 {
     &:disabled {
+      opacity: 75%;
+    }
+  }
+  .has-checked\:text-on-surface-strong {
+    &:has(*:checked) {
+      color: var(--color-on-surface-strong);
+    }
+  }
+  .has-disabled\:cursor-not-allowed {
+    &:has(*:disabled) {
+      cursor: not-allowed;
+    }
+  }
+  .has-disabled\:opacity-75 {
+    &:has(*:disabled) {
       opacity: 75%;
     }
   }
@@ -1058,6 +1142,23 @@
       color: var(--color-primary-dark);
     }
   }
+  .dark\:checked\:border-primary-dark {
+    @media (prefers-color-scheme: dark) {
+      &:checked {
+        border-color: var(--color-primary-dark);
+      }
+    }
+  }
+  .dark\:checked\:before\:bg-primary-dark {
+    @media (prefers-color-scheme: dark) {
+      &:checked {
+        &::before {
+          content: var(--tw-content);
+          background-color: var(--color-primary-dark);
+        }
+      }
+    }
+  }
   .dark\:hover\:bg-primary-dark\/5 {
     @media (prefers-color-scheme: dark) {
       &:hover {
@@ -1079,10 +1180,33 @@
       }
     }
   }
+  .dark\:focus\:outline-outline-dark-strong {
+    @media (prefers-color-scheme: dark) {
+      &:focus {
+        outline-color: var(--color-outline-dark-strong);
+      }
+    }
+  }
+  .dark\:checked\:focus\:outline-primary-dark {
+    @media (prefers-color-scheme: dark) {
+      &:checked {
+        &:focus {
+          outline-color: var(--color-primary-dark);
+        }
+      }
+    }
+  }
   .dark\:focus-visible\:outline-primary-dark {
     @media (prefers-color-scheme: dark) {
       &:focus-visible {
         outline-color: var(--color-primary-dark);
+      }
+    }
+  }
+  .dark\:has-checked\:text-on-surface-dark-strong {
+    @media (prefers-color-scheme: dark) {
+      &:has(*:checked) {
+        color: var(--color-on-surface-dark-strong);
       }
     }
   }
@@ -1262,5 +1386,10 @@
 }
 @property --tw-duration {
   syntax: "*";
+  inherits: false;
+}
+@property --tw-content {
+  syntax: "*";
+  initial-value: "";
   inherits: false;
 }
