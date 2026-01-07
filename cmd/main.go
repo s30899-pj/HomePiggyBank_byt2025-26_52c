@@ -60,13 +60,13 @@ func main() {
 
 		r.Get("/", basic.NewBasicHandler().Index)
 
-		r.Get("/register", auth.NewAuthHandler().GetRegister)
+		r.Get("/register", auth.NewGetAuthHandler().GetRegister)
 
 		r.Post("/register", auth.NewPostRegisterHandler(auth.PostRegisterHandlerParams{
 			UserStore: userStore,
 		}).PostRegister)
 
-		r.Get("/login", auth.NewAuthHandler().GetLogin)
+		r.Get("/login", auth.NewGetAuthHandler().GetLogin)
 
 		r.Post("/login", auth.NewPostLoginHandler(auth.PostLoginHandlerParams{
 			UserStore:         userStore,

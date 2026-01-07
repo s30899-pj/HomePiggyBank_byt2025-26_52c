@@ -45,3 +45,13 @@ func (s *UserStore) GetUser(email string) (*store.User, error) {
 
 	return &user, err
 }
+
+func (s *UserStore) CheckUsername(username string) (bool, error) {
+	var count int64
+	err := s.db.Where("username = ?", username).Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, err
+}

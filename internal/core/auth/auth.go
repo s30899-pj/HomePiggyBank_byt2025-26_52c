@@ -12,13 +12,13 @@ import (
 	templAlerts "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/templ/alerts"
 )
 
-type AuthHandler struct{}
+type GetAuthHandler struct{}
 
-func NewAuthHandler() *AuthHandler {
-	return &AuthHandler{}
+func NewGetAuthHandler() *GetAuthHandler {
+	return &GetAuthHandler{}
 }
 
-func (h *AuthHandler) GetRegister(w http.ResponseWriter, r *http.Request) {
+func (h *GetAuthHandler) GetRegister(w http.ResponseWriter, r *http.Request) {
 	c := templ.Register()
 	err := templ.Layout(c, "Sign up").Render(r.Context(), w)
 
@@ -29,8 +29,7 @@ func (h *AuthHandler) GetRegister(w http.ResponseWriter, r *http.Request) {
 }
 
 // TODO: add usage of alert from register page
-// TODO: add alerts for wrong email address or password
-func (h *AuthHandler) GetLogin(w http.ResponseWriter, r *http.Request) {
+func (h *GetAuthHandler) GetLogin(w http.ResponseWriter, r *http.Request) {
 	c := templ.Login()
 	err := templ.Layout(c, "Log in").Render(r.Context(), w)
 
@@ -61,12 +60,29 @@ func (h *PostRegisterHandler) PostRegister(w http.ResponseWriter, r *http.Reques
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	err := h.userStore.CreateUser(username, email, password)
+	registerError := func(code int, title string, description string) {
+		w.WriteHeader(code)
+		c := templAlerts.Error(title, description)
+		c.Render(r.Context(), w)
+	}
+
+	//usernameExisting, err := h.userStore.CheckUsername(username)
+	//
+	//if usernameExisting {
+	//
+	//}
+
+	user, err := h.userStore.GetUser(email)
+
+	if user != nil && err == nil {
+		registerError(http.StatusConflict, "Registration failed", "User with this email already exists")
+		return
+	}
+
+	err = h.userStore.CreateUser(username, email, password)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		c := templAlerts.Error("Registration failed", "There was a problem creating your account. Please check your details and try again.")
-		c.Render(r.Context(), w)
+		registerError(http.StatusBadRequest, "Registration failed", "There was a problem creating your account. Please check your details and try again.")
 		return
 	}
 
@@ -96,7 +112,6 @@ func NewPostLoginHandler(params PostLoginHandlerParams) *PostLoginHandler {
 	}
 }
 
-// TODO: Add an expiration time setting to login and registration alerts and fix the close button
 func (h *PostLoginHandler) PostLogin(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
@@ -104,20 +119,14 @@ func (h *PostLoginHandler) PostLogin(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.userStore.GetUser(email)
 
-	//TODO: change alert for not existing user
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		c := templAlerts.Error("Login failed", "Unable to sign in. Please try again.")
-		c.Render(r.Context(), w)
-		return
+	passwordValid := false
+	if err == nil {
+		passwordValid, err = h.passwordHash.ComparePasswordAndHash(password, user.Password)
 	}
 
-	passwordValid, err := h.passwordHash.ComparePasswordAndHash(password, user.Password)
-
-	// TODO: add alert description
 	if err != nil || !passwordValid {
 		w.WriteHeader(http.StatusUnauthorized)
-		c := templAlerts.Error("Login failed", "")
+		c := templAlerts.Error("Login failed", "Invalid email or password.")
 		c.Render(r.Context(), w)
 		return
 	}
