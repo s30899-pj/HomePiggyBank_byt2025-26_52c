@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	templBasic "github.com/a-h/templ"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/hash"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/templ"
@@ -28,9 +29,18 @@ func (h *GetAuthHandler) GetRegister(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// TODO: add usage of alert from register page
 func (h *GetAuthHandler) GetLogin(w http.ResponseWriter, r *http.Request) {
-	c := templ.Login()
+	from := r.URL.Query().Get("from")
+
+	var alert templBasic.Component
+	if from == "register-success" {
+		alert = templAlerts.Success(
+			"Registration successful",
+			"Your account has been created. You can now log in.",
+		)
+	}
+
+	c := templ.Login(alert)
 	err := templ.Layout(c, "Log in").Render(r.Context(), w)
 
 	if err != nil {
@@ -53,8 +63,6 @@ func NewPostRegisterHandler(params PostRegisterHandlerParams) *PostRegisterHandl
 	}
 }
 
-// TODO: add verification for existing email address or username
-// TODO: add alerts for an existing email address or username
 func (h *PostRegisterHandler) PostRegister(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	email := r.FormValue("email")
@@ -66,15 +74,24 @@ func (h *PostRegisterHandler) PostRegister(w http.ResponseWriter, r *http.Reques
 		c.Render(r.Context(), w)
 	}
 
-	//usernameExisting, err := h.userStore.CheckUsername(username)
-	//
-	//if usernameExisting {
-	//
-	//}
+	usernameBusy, err := h.userStore.UsernameExists(username)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
-	user, err := h.userStore.GetUser(email)
+	if usernameBusy {
+		registerError(http.StatusConflict, "Registration failed", "User with this username already exists")
+		return
+	}
 
-	if user != nil && err == nil {
+	emailBusy, err := h.userStore.EmailExists(email)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if emailBusy {
 		registerError(http.StatusConflict, "Registration failed", "User with this email already exists")
 		return
 	}
@@ -86,7 +103,7 @@ func (h *PostRegisterHandler) PostRegister(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	w.Header().Set("HX-Redirect", "/login")
+	w.Header().Set("HX-Redirect", "/login?from=register-success")
 }
 
 type PostLoginHandler struct {
@@ -182,6 +199,7 @@ func NewPostLogoutHandler(params PostLogoutHandlerParams) *PostLogoutHandler {
 	}
 }
 
+// TODO: add deletion or revocation of session after user logs out
 func (h *PostLogoutHandler) PostLogout(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:    h.sessionCookieName,

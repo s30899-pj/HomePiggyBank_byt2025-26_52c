@@ -1,6 +1,8 @@
 package dbstore
 
 import (
+	"errors"
+
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/hash"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store"
 	"gorm.io/gorm"
@@ -46,12 +48,32 @@ func (s *UserStore) GetUser(email string) (*store.User, error) {
 	return &user, err
 }
 
-func (s *UserStore) CheckUsername(username string) (bool, error) {
-	var count int64
-	err := s.db.Where("username = ?", username).Count(&count).Error
+func (s *UserStore) EmailExists(email string) (bool, error) {
+	var user store.User
+	err := s.db.Select("id").Where("email = ?", email).First(&user).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return false, nil
+	}
+
 	if err != nil {
 		return false, err
 	}
 
-	return count > 0, err
+	return true, err
+}
+
+func (s *UserStore) UsernameExists(email string) (bool, error) {
+	var user store.User
+	err := s.db.Select("id").Where("username = ?", email).First(&user).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return false, nil
+	}
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, err
 }
