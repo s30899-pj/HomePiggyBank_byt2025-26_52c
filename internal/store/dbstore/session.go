@@ -50,3 +50,8 @@ func (s *SessionStore) GetUserFromSession(sessionID string, userID string) (*sto
 
 	return &session.User, nil
 }
+
+func (s *SessionStore) DeleteSession(userID uint) error {
+	var session store.Session
+	return s.db.Where("user_id = ?", userID).Delete(&session).Error
+}

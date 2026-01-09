@@ -8,6 +8,7 @@ import (
 
 	templBasic "github.com/a-h/templ"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/hash"
+	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/middleware"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/templ"
 	templAlerts "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/templ/alerts"
@@ -21,7 +22,7 @@ func NewGetAuthHandler() *GetAuthHandler {
 
 func (h *GetAuthHandler) GetRegister(w http.ResponseWriter, r *http.Request) {
 	c := templ.Register()
-	err := templ.Layout(c, "Sign up").Render(r.Context(), w)
+	err := templ.Layout(c, "Sign up | Home Piggy Bank", false).Render(r.Context(), w)
 
 	if err != nil {
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
@@ -41,7 +42,7 @@ func (h *GetAuthHandler) GetLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c := templ.Login(alert)
-	err := templ.Layout(c, "Log in").Render(r.Context(), w)
+	err := templ.Layout(c, "Log in | Home Piggy Bank", false).Render(r.Context(), w)
 
 	if err != nil {
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
@@ -186,21 +187,38 @@ func (h *PostLoginHandler) PostLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 type PostLogoutHandler struct {
+	sessionStore      store.SessionStore
 	sessionCookieName string
 }
 
 type PostLogoutHandlerParams struct {
+	SessionStore      store.SessionStore
 	SessionCookieName string
 }
 
 func NewPostLogoutHandler(params PostLogoutHandlerParams) *PostLogoutHandler {
 	return &PostLogoutHandler{
+		sessionStore:      params.SessionStore,
 		sessionCookieName: params.SessionCookieName,
 	}
 }
 
-// TODO: add deletion or revocation of session after user logs out
 func (h *PostLogoutHandler) PostLogout(w http.ResponseWriter, r *http.Request) {
+	user := middleware.GetUser(r.Context())
+
+	if user == nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	userID := user.ID
+
+	err := h.sessionStore.DeleteSession(userID)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	http.SetCookie(w, &http.Cookie{
 		Name:    h.sessionCookieName,
 		MaxAge:  -1,

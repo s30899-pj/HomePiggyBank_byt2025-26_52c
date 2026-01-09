@@ -30,7 +30,7 @@ func main() {
 
 	db := database.MustOpen(cfg.DatabaseName)
 
-	passwordhash := passwordhash.NewHPasswordHash()
+	passwordhash := passwordhash.NewPasswordHash()
 
 	userStore := dbstore.NewUserStore(
 		dbstore.NewUserStoreParams{
@@ -52,13 +52,14 @@ func main() {
 	}))
 	authMiddleware := m.NewAuthMiddleware(sessionStore, cfg.SessionCookieName)
 
+	//TODO: implementation core logic
 	r.Group(func(r chi.Router) {
 		r.Use(
 			middleware.Logger,
 			authMiddleware.AddUserToContext,
 		)
 
-		r.Get("/", basic.NewBasicHandler().Index)
+		r.Get("/", basic.NewBasicHandler().GetHome)
 
 		r.Get("/register", auth.NewGetAuthHandler().GetRegister)
 
@@ -76,6 +77,7 @@ func main() {
 		}).PostLogin)
 
 		r.Post("/logout", auth.NewPostLogoutHandler(auth.PostLogoutHandlerParams{
+			SessionStore:      sessionStore,
 			SessionCookieName: cfg.SessionCookieName,
 		}).PostLogout)
 	})

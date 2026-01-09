@@ -19,7 +19,7 @@ type PasswordHash struct {
 	keyLength   uint32
 }
 
-func NewHPasswordHash() *PasswordHash {
+func NewPasswordHash() *PasswordHash {
 	return &PasswordHash{
 		memory:      64 * 1024,
 		iterations:  3,

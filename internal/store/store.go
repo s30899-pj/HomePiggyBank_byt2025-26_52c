@@ -76,4 +76,5 @@ type ReportStore interface {
 type SessionStore interface {
 	CreateSession(session *Session) (*Session, error)
 	GetUserFromSession(sessionID string, userID string) (*User, error)
+	DeleteSession(userID uint) error
 }
