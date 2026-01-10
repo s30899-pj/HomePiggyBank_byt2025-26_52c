@@ -9,6 +9,12 @@ type User struct {
 	Password string `json:"-"`
 }
 
+type Households struct {
+	ID             uint      `gorm:"primaryKey" json:"id"`
+	HouseholdsName string    `json:"households_name"`
+	CreatedAt      time.Time `json:"date"`
+}
+
 type Expenses struct {
 	ID       uint      `gorm:"primaryKey" json:"id"`
 	Amount   float32   `json:"amount"`
@@ -16,12 +22,6 @@ type Expenses struct {
 	Date     time.Time `json:"date"`
 	//UserID    uint   `json:"user_id"`
 	//HouseholdsID    uint   `json:"households_id"`
-}
-
-type Households struct {
-	ID             uint      `gorm:"primaryKey" json:"id"`
-	HouseholdsName string    `json:"households_name"`
-	Date           time.Time `json:"date"`
 }
 
 type Membership struct {
@@ -51,15 +51,15 @@ type UserStore interface {
 	UsernameExists(username string) (bool, error)
 }
 
+type HouseholdsStore interface {
+	CreateHousehold(householdsName string, createdAt time.Time) error
+	GetHousehold(householdsName string, createdAt time.Time) (*Households, error)
+}
+
 type ExpensesStore interface {
 	// CreateExpense TODO: check
 	CreateExpense(amount float32, category string, date time.Time) error
 	GetExpense(amount float32, category string, date time.Time) (*Expenses, error)
-}
-
-type HouseholdsStore interface {
-	CreateHousehold(householdsName string, date time.Time) error
-	GetHousehold(householdsName string, date time.Time) (*Households, error)
 }
 
 type MembershipStore interface {

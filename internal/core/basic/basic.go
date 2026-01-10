@@ -14,8 +14,6 @@ func NewBasicHandler() *BasicHandler {
 	return &BasicHandler{}
 }
 
-// TODO: separate the logged in user from the unlogged one
-// TODO: personalize the layout
 func (h *BasicHandler) GetHome(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUser(r.Context())
 
@@ -23,11 +21,11 @@ func (h *BasicHandler) GetHome(w http.ResponseWriter, r *http.Request) {
 
 	var c, l templBasic.Component
 	if isLoggedIn {
-		c = templ.Index()
-		l = templ.Layout(c, "Home | Home Piggy Bank", isLoggedIn)
+		c = templ.Index(user)
+		l = templ.Layout(c, "Home | Home Piggy Bank", isLoggedIn, user)
 	} else {
 		c = templ.GuestIndex()
-		l = templ.Layout(c, "Welcome to Home Piggy Bank", isLoggedIn)
+		l = templ.Layout(c, "Welcome to Home Piggy Bank", isLoggedIn, nil)
 	}
 
 	err := l.Render(r.Context(), w)

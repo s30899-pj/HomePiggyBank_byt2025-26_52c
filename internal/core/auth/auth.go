@@ -22,7 +22,7 @@ func NewGetAuthHandler() *GetAuthHandler {
 
 func (h *GetAuthHandler) GetRegister(w http.ResponseWriter, r *http.Request) {
 	c := templ.Register()
-	err := templ.Layout(c, "Sign up | Home Piggy Bank", false).Render(r.Context(), w)
+	err := templ.Layout(c, "Sign up | Home Piggy Bank", false, nil).Render(r.Context(), w)
 
 	if err != nil {
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
@@ -42,7 +42,7 @@ func (h *GetAuthHandler) GetLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c := templ.Login(alert)
-	err := templ.Layout(c, "Log in | Home Piggy Bank", false).Render(r.Context(), w)
+	err := templ.Layout(c, "Log in | Home Piggy Bank", false, nil).Render(r.Context(), w)
 
 	if err != nil {
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
