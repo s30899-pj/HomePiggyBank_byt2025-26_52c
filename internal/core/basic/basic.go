@@ -8,27 +8,49 @@ import (
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/templ"
 )
 
-type BasicHandler struct{}
+type GetBasicHandler struct{}
 
-func NewBasicHandler() *BasicHandler {
-	return &BasicHandler{}
+func NewGetBasicHandler() *GetBasicHandler {
+	return &GetBasicHandler{}
 }
 
-func (h *BasicHandler) GetHome(w http.ResponseWriter, r *http.Request) {
+func (h *GetBasicHandler) GetIndex(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUser(r.Context())
 
-	isLoggedIn := user != nil
-
-	var c, l templBasic.Component
-	if isLoggedIn {
-		c = templ.Index(user)
-		l = templ.Layout(c, "Home | Home Piggy Bank", isLoggedIn, user)
-	} else {
-		c = templ.GuestIndex()
-		l = templ.Layout(c, "Welcome to Home Piggy Bank", isLoggedIn, nil)
+	if user != nil {
+		http.Redirect(w, r, "/home", http.StatusFound)
+		return
 	}
 
-	err := l.Render(r.Context(), w)
+	c := templ.GuestIndex()
+	err := templ.Layout(c, "Welcome to Home Piggy Bank", false, nil).Render(r.Context(), w)
+
+	if err != nil {
+		http.Error(w, "Error rendering template", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h *GetBasicHandler) GetHome(w http.ResponseWriter, r *http.Request) {
+	user := middleware.GetUser(r.Context())
+
+	if user == nil {
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+
+	isHX := r.Header.Get("HX-Request") == "true"
+
+	c := templ.Home(user)
+
+	var out templBasic.Component
+	if isHX {
+		out = c
+	} else {
+		out = templ.Layout(c, "Home | Home Piggy Bank", true, user)
+	}
+
+	err := out.Render(r.Context(), w)
 
 	if err != nil {
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)

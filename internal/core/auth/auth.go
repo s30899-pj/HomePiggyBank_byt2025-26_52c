@@ -105,6 +105,7 @@ func (h *PostRegisterHandler) PostRegister(w http.ResponseWriter, r *http.Reques
 	}
 
 	w.Header().Set("HX-Redirect", "/login?from=register-success")
+	w.WriteHeader(http.StatusOK)
 }
 
 type PostLoginHandler struct {
@@ -182,7 +183,7 @@ func (h *PostLoginHandler) PostLogin(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, &cookie)
 
-	w.Header().Set("HX-Redirect", "/")
+	w.Header().Set("HX-Redirect", "/home")
 	w.WriteHeader(http.StatusOK)
 }
 

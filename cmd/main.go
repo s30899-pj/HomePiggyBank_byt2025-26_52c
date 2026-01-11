@@ -59,7 +59,7 @@ func main() {
 			authMiddleware.AddUserToContext,
 		)
 
-		r.Get("/", basic.NewBasicHandler().GetHome)
+		r.Get("/", basic.NewGetBasicHandler().GetIndex)
 
 		r.Get("/register", auth.NewGetAuthHandler().GetRegister)
 
@@ -80,6 +80,8 @@ func main() {
 			SessionStore:      sessionStore,
 			SessionCookieName: cfg.SessionCookieName,
 		}).PostLogout)
+
+		r.Get("/home", basic.NewGetBasicHandler().GetHome)
 	})
 
 	killSig := make(chan os.Signal, 1)
