@@ -12,6 +12,7 @@ import (
 
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/auth"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/basic"
+	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/households"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/hash/passwordhash"
 	m "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/middleware"
 
@@ -82,6 +83,8 @@ func main() {
 		}).PostLogout)
 
 		r.Get("/home", basic.NewGetBasicHandler().GetHome)
+
+		r.Get("/households", households.NewGetHouseholdsHandler().GetHouseholds)
 	})
 
 	killSig := make(chan os.Signal, 1)

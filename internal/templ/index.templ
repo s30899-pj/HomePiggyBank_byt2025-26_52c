@@ -2,9 +2,12 @@ package templ
 
 import "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store"
 
-templ Home(user *store.User) {
-	<div class="flex flex-col min-h-full justify-center items-center">
-		<div class="flex flex-col w-full items-center justify-center rounded-radius overflow-hidden border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark p-4 gap-3 text-center">
+templ Home(user *store.User, isHX bool) {
+	if isHX {
+		<title>Home | Home Piggy Bank</title>
+	}
+	<div class="flex flex-col h-full w-full justify-center items-center">
+		<div class="flex flex-col h-full w-full items-center justify-center rounded-radius overflow-hidden border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark p-4 gap-3 text-center">
 			<img src="/static/img/home-image.png" class="w-3/5 h-auto mb-4 rounded-radius shadow-lg" alt="Home illustration"/>
 			<h3 class="text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">
 				Welcome { user.Username }
@@ -13,8 +16,24 @@ templ Home(user *store.User) {
 				Manage your household budget effortlessly. Split expenses, track spending, and stay on top of your finances—all in one secure, intuitive web app.
 			</p>
 			<div class="flex flex-col sm:flex-row gap-2">
-				<a href="/households" class="whitespace-nowrap rounded-radius bg-primary border border-primary px-4 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark">View Households</a>
-				<a href="/expenses" class="flex flex-nowrap justify-center items-center gap-2 bg-transparent rounded-radius border border-primary px-4 py-2 text-sm font-medium tracking-wide text-primary transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:border-primary-dark dark:text-primary-dark dark:focus-visible:outline-primary-dark">
+				<a
+					href="/households"
+					hx-get="/households"
+					hx-target="#swap-content"
+					hx-swap="innerHTML"
+					hx-push-url="true"
+					@click="$store.nav.path = '/households'"
+					class="whitespace-nowrap rounded-radius bg-primary border border-primary px-4 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark"
+				>View Households</a>
+				<a
+					href="/expenses"
+					hx-get="/expenses"
+					hx-target="#swap-content"
+					hx-swap="innerHTML"
+					hx-push-url="true"
+					@click="$store.nav.path = '/expenses'"
+					class="flex flex-nowrap justify-center items-center gap-2 bg-transparent rounded-radius border border-primary px-4 py-2 text-sm font-medium tracking-wide text-primary transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:border-primary-dark dark:text-primary-dark dark:focus-visible:outline-primary-dark"
+				>
 					<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="size-5 fill-on-surface-strong dark:fill-on-surface-dark-strong" fill="currentColor">
 						<path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd"></path>
 					</svg>
@@ -25,7 +44,7 @@ templ Home(user *store.User) {
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
 			<div class="p-4 border rounded-radius text-sm text-on-surface dark:text-on-surface-dark">
 				<h4 class="font-semibold mb-2">Households</h4>
-				<p class="text-sm">Create and manage different households, invite family members, and track shared budgets.</p>
+				<p class="text-sm">Create and manage different households and track budgets.</p>
 			</div>
 			<div class="p-4 border rounded-radius text-sm text-on-surface dark:text-on-surface-dark">
 				<h4 class="font-semibold mb-2">Expenses</h4>

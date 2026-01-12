@@ -41,7 +41,7 @@ func (h *GetBasicHandler) GetHome(w http.ResponseWriter, r *http.Request) {
 
 	isHX := r.Header.Get("HX-Request") == "true"
 
-	c := templ.Home(user)
+	c := templ.Home(user, isHX)
 
 	var out templBasic.Component
 	if isHX {

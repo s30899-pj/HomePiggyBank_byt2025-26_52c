@@ -12,6 +12,8 @@ templ header(title string) {
 		<script src="/static/script/response-targets.js"></script>
 		<script defer src="/static/script/alpine-focus.min.js"></script>
 		<script defer src="/static/script/alpine.min.js"></script>
+		<script src="/static/script/chart.umd.min.js"></script>
+		<script src="/static/script/path-change.js"></script>
 		// <link rel="stylesheet" href="/web/static/css/style.min.css"/>
 		<link rel="stylesheet" href="/static/css/style.css"/>
 	</head>
@@ -40,14 +42,19 @@ templ sidebar(user *store.User) {
 		<div class="my-4">
 			<span class="block w-full h-px bg-outline dark:bg-outline-dark"></span>
 		</div>
-		<div x-data="{ currentPage: window.location.pathname }" class="flex flex-col gap-2 overflow-y-auto pb-6">
+		<div
+			x-data
+			@htmx:pushed-url.window="$store.nav.path = $event.detail.path"
+			class="flex flex-col gap-2 overflow-y-auto pb-6"
+		>
 			<a
 				href="/home"
 				hx-get="/home"
 				hx-target="#swap-content"
 				hx-swap="innerHTML"
 				hx-push-url="true"
-				:class="currentPage === '/home'
+				@click="$store.nav.path = '/home'"
+				:class="$store.nav.path === '/home'
                   ? 'bg-primary/10 text-on-surface-strong focus-visible:underline dark:bg-primary-dark/10 dark:text-on-surface-dark-strong'
                   : 'text-on-surface hover:bg-primary/5 hover:text-on-surface-strong dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong'"
 				class="flex flex-col justify-between items-center rounded-radius gap-2 p-4 text-lg font-semibold focus:outline-hidden w-full"
@@ -63,7 +70,8 @@ templ sidebar(user *store.User) {
 				hx-target="#swap-content"
 				hx-swap="innerHTML"
 				hx-push-url="true"
-				:class="currentPage === '/households'
+				@click="$store.nav.path = '/households'"
+				:class="$store.nav.path === '/households'
                   ? 'bg-primary/10 text-on-surface-strong focus-visible:underline dark:bg-primary-dark/10 dark:text-on-surface-dark-strong'
                   : 'text-on-surface hover:bg-primary/5 hover:text-on-surface-strong dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong'"
 				class="flex flex-col justify-between items-center rounded-radius gap-2 p-4 text-lg font-semibold focus:outline-hidden w-full"
@@ -79,7 +87,8 @@ templ sidebar(user *store.User) {
 				hx-target="#swap-content"
 				hx-swap="innerHTML"
 				hx-push-url="true"
-				:class="currentPage === '/expenses'
+				@click="$store.nav.path = '/expenses'"
+				:class="$store.nav.path === '/expenses'
                   ? 'bg-primary/10 text-on-surface-strong focus-visible:underline dark:bg-primary-dark/10 dark:text-on-surface-dark-strong'
                   : 'text-on-surface hover:bg-primary/5 hover:text-on-surface-strong dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong'"
 				class="flex flex-col justify-between items-center rounded-radius gap-2 p-4 text-lg font-semibold focus:outline-hidden w-full"
@@ -95,7 +104,8 @@ templ sidebar(user *store.User) {
 				hx-target="#swap-content"
 				hx-swap="innerHTML"
 				hx-push-url="true"
-				:class="currentPage === '/reports'
+				@click="$store.nav.path = '/reports'"
+				:class="$store.nav.path === '/reports'
                   ? 'bg-primary/10 text-on-surface-strong focus-visible:underline dark:bg-primary-dark/10 dark:text-on-surface-dark-strong'
                   : 'text-on-surface hover:bg-primary/5 hover:text-on-surface-strong dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong'"
 				class="flex flex-col justify-between items-center rounded-radius gap-2 p-4 text-lg font-semibold focus:outline-hidden w-full"
@@ -157,8 +167,8 @@ templ sidebarToggle() {
 templ appShell(content templ.Component, user *store.User) {
 	<div x-data="{ showSidebar: false }" class="relative flex w-full flex-col md:flex-row">
 		@sidebar(user)
-		<main id="main-content">
-			<div id="swap-content" class="h-svh w-full overscroll-none p-4 bg-surface dark:bg-surface-dark">
+		<main id="main-content" class="flex-1">
+			<div id="swap-content" class="w-full h-svh p-4 bg-surface dark:bg-surface-dark">
 				@content
 			</div>
 		</main>
