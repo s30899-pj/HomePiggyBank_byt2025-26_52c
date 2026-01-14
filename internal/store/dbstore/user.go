@@ -48,6 +48,26 @@ func (s *UserStore) GetUser(email string) (*store.User, error) {
 	return &user, err
 }
 
+func (s *UserStore) GetUserByUsername(username string) (*store.User, error) {
+	var user store.User
+	err := s.db.Where("username = ?", username).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, err
+}
+
+func (s *UserStore) GetAllUsers() ([]store.User, error) {
+	var users []store.User
+	err := s.db.Find(&users).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
 func (s *UserStore) EmailExists(email string) (bool, error) {
 	var user store.User
 	err := s.db.Select("id").Where("email = ?", email).First(&user).Error

@@ -8,7 +8,9 @@ package templ
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func chart() templ.Component {
+import "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store"
+
+func householdsToolbar(users []store.User) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -29,65 +31,50 @@ func chart() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<canvas id=\"householdDonut\" class=\"w-full h-full\"></canvas><script>\n    function initChart() {\n        const canvas = document.getElementById('householdDonut');\n        if (!canvas) return;\n\n        const ctx = canvas.getContext('2d');\n\n        const textColor = getComputedStyle(canvas.parentElement).color;\n\n        if (canvas._chart) {\n            canvas._chart.destroy();\n        }\n\n        canvas._chart = new Chart(ctx, {\n            type: 'doughnut',\n            data: {\n                labels: ['Savings', 'Expenses', 'Investments'],\n                datasets: [{\n                    data: [40, 30, 30],\n                    backgroundColor: [\n                        'rgba(54, 162, 235, 0.75)',\n                        'rgba(255, 99, 132, 0.75)',\n                        'rgba(255, 206, 86, 0.75)'\n                    ],\n                    borderColor: textColor,\n                    borderWidth: 2,\n                    hoverOffset: 30\n                }]\n            },\n            options: {\n                responsive: true,\n                maintainAspectRatio: false,\n                cutout: '65%',\n                animation: {\n                        animateRotate: true,\n                        animateScale: true,\n                        duration: 1200,\n                        easing: 'easeOutQuart',\n                },\n                layout: {\n                    padding: 20,\n                },\n                plugins: {\n                    legend: {\n                        position: 'right',\n                        labels: {\n                            color: textColor,\n                            padding: 20,\n                            boxWidth: 12,\n                            boxHeight: 12,\n                            font: {\n                                size: 14,\n                                weight: '500'\n                            }\n                        }\n                    },\n                    tooltip: {\n                        bodyColor: textColor,\n                        titleColor: textColor,\n                        backgroundColor: 'rgba(0,0,0,0.75)',\n                        padding: 12\n                    }\n                }\n            }\n        });\n    }\n    </script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{modalIsOpen: false}\"><div id=\"flash-alert\" class=\"fixed top-4 left-1/2 z-50 w-full max-w-xl -translate-x-1/2 px-4\"></div><button x-on:click=\"modalIsOpen = true\" type=\"button\" class=\"inline-flex justify-center items-center gap-2 whitespace-nowrap rounded-radius bg-primary border border-primary dark:border-primary-dark px-4 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" class=\"size-5 fill-on-primary dark:fill-on-primary-dark\" fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z\" clip-rule=\"evenodd\"></path></svg> Create group</button><div hx-ext=\"response-targets\" x-cloak x-show=\"modalIsOpen\" x-transition.opacity.duration.200ms x-trap.inert.noscroll=\"modalIsOpen\" x-on:keydown.esc.window=\"modalIsOpen = false\" x-on:click.self=\"modalIsOpen = false\" class=\"fixed inset-0 z-30 flex items-end justify-center bg-black/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"defaultModalTitle\"><div x-show=\"modalIsOpen\" x-transition:enter=\"transition ease-out duration-200 delay-100 motion-reduce:transition-opacity\" x-transition:enter-start=\"opacity-0 scale-50\" x-transition:enter-end=\"opacity-100 scale-100\" class=\"flex max-w-lg flex-col gap-4 overflow-hidden rounded-radius border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark\"><div class=\"flex items-center justify-between border-b border-outline bg-surface-alt/60 p-4 dark:border-outline-dark dark:bg-surface-dark/20\"><h3 id=\"defaultModalTitle\" class=\"font-semibold tracking-wide text-on-surface-strong dark:text-on-surface-dark-strong\">Create group</h3><button x-on:click=\"modalIsOpen = false\" aria-label=\"close modal\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"1.4\" class=\"w-5 h-5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div><div class=\"px-4 py-8\"><form id=\"create-household-form\" hx-post=\"/household\" hx-trigger=\"submit\" hx-target-4*=\"#flash-alert\" class=\"flex flex-col gap-4 p-4 min-w-xs sm:min-w-md mx-auto\"><div class=\"flex w-full flex-col gap-1 text-on-surface dark:text-on-surface-dark\"><label for=\"nameInput\" class=\"w-fit pl-0.5 text-sm\">Group name</label> <input id=\"nameInput\" type=\"text\" class=\"w-full rounded-radius border border-outline bg-surface-alt px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark\" name=\"name\" placeholder=\"Enter group name\" autocomplete=\"name\" required></div><div class=\"flex w-full max-w-md flex-col gap-1 text-on-surface dark:text-on-surface-dark\"><label for=\"descriptionTextarea\" class=\"w-fit pl-0.5 text-sm\">Description</label> <textarea id=\"descriptionTextarea\" class=\"w-full resize-y max-h-40 rounded-radius border border-outline bg-surface-alt px-2.5 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark\" name=\"description\" rows=\"3\" placeholder=\"Enter description for group\" required></textarea></div><div x-data=\"{ open: false, selected: [] }\" class=\"relative flex w-full flex-col gap-1 text-on-surface dark:text-on-surface-dark\"><label class=\"w-fit pl-0.5 text-sm\">Add members</label> <button type=\"button\" @click=\"open = !open\" :class=\"open ? 'ring-2 ring-offset-2 ring-primary dark:ring-primary-dark' : ''\" class=\"w-full flex justify-between items-center rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-primary-dark\"><span x-text=\"selected.length ? selected.join(', ') : 'Please Select'\" class=\"truncate\"></span> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"size-5 ml-2 pointer-events-none\"><path fill-rule=\"evenodd\" d=\"M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z\" clip-rule=\"evenodd\"></path></svg></button><div x-show=\"open\" x-transition @click.away=\"open = false\" class=\"absolute z-50 mt-1 w-full rounded-radius border border-outline bg-surface-alt shadow-lg dark:border-outline-dark dark:bg-surface-dark-alt max-h-48 overflow-auto\"><ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		return nil
-	})
-}
-
-func toolbar() templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+		if len(users) == 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<li class=\"px-4 py-2 text-sm text-on-surface/70 dark:text-on-surface-dark/70\">No users available</li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			for _, user := range users {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<li class=\"flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-surface-alt/50 dark:hover:bg-surface-dark/20 text-on-surface dark:text-on-surface-dark\"><input type=\"checkbox\" name=\"members[]\" value=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
 				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var2 == nil {
-			templ_7745c5c3_Var2 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<button type=\"button\" class=\"inline-flex justify-center items-center gap-2 whitespace-nowrap rounded-radius bg-primary border border-primary dark:border-primary-dark px-4 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" class=\"size-5 fill-on-primary dark:fill-on-primary-dark\" fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z\" clip-rule=\"evenodd\"></path></svg> Create</button>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-func list() templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				var templ_7745c5c3_Var2 string
+				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(user.Username)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/households.templ`, Line: 66, Col: 73}
 				}
-			}()
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" x-model=\"selected\" class=\"w-4 h-4 rounded border border-outline dark:border-outline-dark focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark\"> <span>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var3 string
+				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(user.Username)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/households.templ`, Line: 67, Col: 33}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</span></li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
 		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div x-data=\"{ checkAll : false }\" class=\"overflow-hidden w-full overflow-x-auto rounded-radius border border-outline dark:border-outline-dark\"><table class=\"w-full text-left text-sm text-on-surface dark:text-on-surface-dark\"><thead class=\"border-b border-outline bg-surface-alt text-on-surface-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-strong\"><tr><th scope=\"col\" class=\"p-4\"><label for=\"checkAll\" class=\"flex items-center text-on-surface dark:text-on-surface-dark \"><div class=\"relative flex items-center\"><input type=\"checkbox\" x-model=\"checkAll\" id=\"checkAll\" class=\"before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark\"> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"4\" class=\"pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4.5 12.75l6 6 9-13.5\"></path></svg></div></label></th><th scope=\"col\" class=\"p-4\">CustomerID</th><th scope=\"col\" class=\"p-4\">Name</th><th scope=\"col\" class=\"p-4\">Email</th><th scope=\"col\" class=\"p-4\">Membership</th></tr></thead> <tbody class=\"divide-y divide-outline dark:divide-outline-dark\"><tr><td class=\"p-4\"><label for=\"user2335\" class=\"flex items-center text-on-surface dark:text-on-surface-dark \"><div class=\"relative flex items-center\"><input type=\"checkbox\" id=\"user2335\" class=\"before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark\" :checked=\"checkAll\"> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"4\" class=\"pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4.5 12.75l6 6 9-13.5\"></path></svg></div></label></td><td class=\"p-4\">2335</td><td class=\"p-4\">Alice Brown</td><td class=\"p-4\">alice.brown@gmail.com</td><td class=\"p-4\"><button type=\"button\" class=\"cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark\">Edit</button></td></tr><tr><td class=\"p-4\"><label for=\"user2338\" class=\"flex items-center text-on-surface dark:text-on-surface-dark \"><div class=\"relative flex items-center\"><input type=\"checkbox\" id=\"user2338\" class=\"before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark\" :checked=\"checkAll\"> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"4\" class=\"pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4.5 12.75l6 6 9-13.5\"></path></svg></div></label></td><td class=\"p-4\">2338</td><td class=\"p-4\">Bob Johnson</td><td class=\"p-4\">johnson.bob@outlook.com</td><td class=\"p-4\"><button type=\"button\" class=\"cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark\">Edit</button></td></tr><tr><td class=\"p-4\"><label for=\"user2342\" class=\"flex items-center text-on-surface dark:text-on-surface-dark \"><div class=\"relative flex items-center\"><input type=\"checkbox\" id=\"user2342\" class=\"before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark\" :checked=\"checkAll\"> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"4\" class=\"pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4.5 12.75l6 6 9-13.5\"></path></svg></div></label></td><td class=\"p-4\">2342</td><td class=\"p-4\">Sarah Adams</td><td class=\"p-4\">s.adams@gmail.com</td><td class=\"p-4\"><button type=\"button\" class=\"cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark\">Edit</button></td></tr><tr><td class=\"p-4\"><label for=\"user2338\" class=\"flex items-center text-on-surface dark:text-on-surface-dark \"><div class=\"relative flex items-center\"><input type=\"checkbox\" id=\"user2338\" class=\"before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark\" :checked=\"checkAll\"> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"4\" class=\"pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4.5 12.75l6 6 9-13.5\"></path></svg></div></label></td><td class=\"p-4\">2338</td><td class=\"p-4\">Bob Johnson</td><td class=\"p-4\">johnson.bob@outlook.com</td><td class=\"p-4\"><button type=\"button\" class=\"cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark\">Edit</button></td></tr><tr><td class=\"p-4\"><label for=\"user2338\" class=\"flex items-center text-on-surface dark:text-on-surface-dark \"><div class=\"relative flex items-center\"><input type=\"checkbox\" id=\"user2338\" class=\"before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark\" :checked=\"checkAll\"> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"4\" class=\"pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4.5 12.75l6 6 9-13.5\"></path></svg></div></label></td><td class=\"p-4\">2338</td><td class=\"p-4\">Bob Johnson</td><td class=\"p-4\">johnson.bob@outlook.com</td><td class=\"p-4\"><button type=\"button\" class=\"cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark\">Edit</button></td></tr><tr><td class=\"p-4\"><label for=\"user2338\" class=\"flex items-center text-on-surface dark:text-on-surface-dark \"><div class=\"relative flex items-center\"><input type=\"checkbox\" id=\"user2338\" class=\"before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark\" :checked=\"checkAll\"> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"4\" class=\"pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4.5 12.75l6 6 9-13.5\"></path></svg></div></label></td><td class=\"p-4\">2338</td><td class=\"p-4\">Bob Johnson</td><td class=\"p-4\">johnson.bob@outlook.com</td><td class=\"p-4\"><button type=\"button\" class=\"cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark\">Edit</button></td></tr><tr><td class=\"p-4\"><label for=\"user2338\" class=\"flex items-center text-on-surface dark:text-on-surface-dark \"><div class=\"relative flex items-center\"><input type=\"checkbox\" id=\"user2338\" class=\"before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark\" :checked=\"checkAll\"> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"4\" class=\"pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4.5 12.75l6 6 9-13.5\"></path></svg></div></label></td><td class=\"p-4\">2338</td><td class=\"p-4\">Bob Johnson</td><td class=\"p-4\">johnson.bob@outlook.com</td><td class=\"p-4\"><button type=\"button\" class=\"cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark\">Edit</button></td></tr></tbody></table></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</ul></div></div></form></div><div class=\"flex flex-col-reverse justify-between gap-2 border-t border-outline bg-surface-alt/60 p-4 dark:border-outline-dark dark:bg-surface-dark/20 sm:flex-row sm:items-center md:justify-end\"><button x-on:click=\"modalIsOpen = false\" type=\"button\" class=\"whitespace-nowrap rounded-radius px-4 py-2 text-center text-sm font-medium tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark\">Cancel</button> <button form=\"create-household-form\" hx-on=\"htmx:afterRequest: modalIsOpen = false\" type=\"submit\" class=\"whitespace-nowrap rounded-radius bg-primary border border-primary dark:border-primary-dark px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark\">Create</button></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -95,7 +82,7 @@ func list() templ.Component {
 	})
 }
 
-func Households(isHX bool) templ.Component {
+func householdsList(households []store.Household) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -116,37 +103,151 @@ func Households(isHX bool) templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"overflow-hidden w-full overflow-x-auto rounded-radius border border-outline dark:border-outline-dark\"><table class=\"w-full text-left text-sm text-on-surface dark:text-on-surface-dark\"><thead class=\"border-b border-outline bg-surface-alt text-on-surface-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-strong\"><tr><th scope=\"col\" class=\"p-4\">Household ID</th><th scope=\"col\" class=\"p-4\">Name</th><th scope=\"col\" class=\"p-4\">Created by</th><th scope=\"col\" class=\"p-4\">Members</th></tr></thead> <tbody class=\"divide-y divide-outline dark:divide-outline-dark\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(households) == 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<tr><td colspan=\"4\" class=\"p-4 text-center text-sm text-on-surface/70 dark:text-on-surface-dark/70\">No households found</td></tr>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			for _, h := range households {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<tr><td class=\"p-4\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var5 string
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(h.ID)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/households.templ`, Line: 111, Col: 29}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</td><td class=\"p-4\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var6 string
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(h.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/households.templ`, Line: 112, Col: 31}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</td><td class=\"p-4\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var7 string
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(h.CreatedBy.Username)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/households.templ`, Line: 113, Col: 45}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</td><td class=\"p-4\"><button type=\"button\" class=\"cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark\">Show</button></td></tr>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</tbody></table></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func Households(isHX bool, households []store.Household, users []store.User) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
 		if isHX {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<title>Households | Home Piggy Bank</title>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<title>Households | Home Piggy Bank</title>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"flex flex-col h-full w-full gap-4\"><div class=\"h-1/2 p-4 rounded-radius overflow-hidden border border-outline  bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark\"><div x-data x-init=\"$nextTick(() => initChart())\" class=\"h-full w-full\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"flex flex-col h-full w-full gap-4\"><div class=\"flex flex-col h-1/2 rounded-radius overflow-hidden border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark\"><div class=\"flex items-center justify-end p-4 border-b border-outline dark:border-outline-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = chart().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = householdsToolbar(users).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div><div class=\"flex flex-col flex-1 rounded-radius overflow-hidden border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark\"><div class=\"flex items-center justify-end p-4 border-b border-outline dark:border-outline-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div><div class=\"flex-1 overflow-auto p-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = toolbar().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = householdsList(households).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><div class=\"flex-1 overflow-auto p-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div></div><div class=\"flex-1 p-4 rounded-radius overflow-hidden border border-outline  bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = list().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = HouseholdMembers().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func HouseholdMembers() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var9 == nil {
+			templ_7745c5c3_Var9 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"overflow-hidden w-full overflow-x-auto rounded-radius border border-outline dark:border-outline-dark\"><table class=\"w-full text-left text-sm text-on-surface dark:text-on-surface-dark\"><thead class=\"border-b border-outline bg-surface-alt text-sm text-on-surface-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-strong\"><tr><th scope=\"col\" class=\"p-4\">User</th><th scope=\"col\" class=\"p-4\">ID</th><th scope=\"col\" class=\"p-4\">Action</th></tr></thead> <tbody class=\"divide-y divide-outline dark:divide-outline-dark\"><tr><td class=\"p-4\"><div class=\"flex w-max items-center gap-2\"><img class=\"size-10 rounded-full object-cover\" src=\"/static/img/user-avatar.png\" alt=\"user avatar\"><div class=\"flex flex-col\"><span class=\"text-neutral-900 dark:text-white\">Alice Brown</span> <span class=\"text-sm text-neutral-600 opacity-85 dark:text-neutral-300\">alice.brown@gmail.com</span></div></div></td><td class=\"p-4\">2335</td><td class=\"p-4\"><button type=\"button\" class=\"whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark\">Edit</button></td></tr><tr><td class=\"p-4\"><div class=\"flex w-max items-center gap-2\"><img class=\"size-10 rounded-full object-cover\" src=\"/static/img/user-avatar.png\" alt=\"user avatar\"><div class=\"flex flex-col\"><span class=\"text-neutral-900 dark:text-white\">Bob Johnson</span> <span class=\"text-sm text-neutral-600 opacity-85 dark:text-neutral-300\">johnson.bob@penguinui.com</span></div></div></td><td class=\"p-4\">2338</td><td class=\"p-4\"><button type=\"button\" class=\"whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark\">Edit</button></td></tr><tr><td class=\"p-4\"><div class=\"flex w-max items-center gap-2\"><img class=\"size-10 rounded-full object-cover\" src=\"/static/img/user-avatar.png\" alt=\"user avatar\"><div class=\"flex flex-col\"><span class=\"text-neutral-900 dark:text-white\">Ryan Thompson</span> <span class=\"text-sm text-neutral-600 opacity-85 dark:text-neutral-300\">ryan.thompson@penguinui.com</span></div></div></td><td class=\"p-4\">2346</td><td class=\"p-4\"><button type=\"button\" class=\"whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark\">Edit</button></td></tr><tr><td class=\"p-4\"><div class=\"flex w-max items-center gap-2\"><img class=\"size-10 rounded-full object-cover\" src=\"/static/img/user-avatar.png\" alt=\"user avatar\"><div class=\"flex flex-col\"><span class=\"text-neutral-900 dark:text-white\">Emily Rodriguez</span> <span class=\"text-sm text-neutral-600 opacity-85 dark:text-neutral-300\">emily.rodriguez@penguinui.com</span></div></div></td><td class=\"p-4\">2349</td><td class=\"p-4\"><button type=\"button\" class=\"whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark\">Edit</button></td></tr><tr><td class=\"p-4\"><div class=\"flex w-max items-center gap-2\"><img class=\"size-10 rounded-full object-cover\" src=\"/static/img/user-avatar.png\" alt=\"user avatar\"><div class=\"flex flex-col\"><span class=\"text-neutral-900 dark:text-white\">Alex Martinez</span> <span class=\"text-sm text-neutral-600 opacity-85 dark:text-neutral-300\">alex.martinez@penguinui.com</span></div></div></td><td class=\"p-4\">2345</td><td class=\"p-4\"><button type=\"button\" class=\"whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark\">Edit</button></td></tr></tbody></table></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

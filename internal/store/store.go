@@ -9,23 +9,29 @@ type User struct {
 	Password string `json:"-"`
 }
 
-type Households struct {
-	ID             uint      `gorm:"primaryKey" json:"id"`
-	HouseholdsName string    `json:"households_name"`
-	CreatedAt      time.Time `json:"date"`
+type Household struct {
+	ID          uint         `gorm:"primaryKey" json:"id"`
+	Name        string       `json:"name"`
+	Description string       `json:"description"`
+	CreatedByID uint         `json:"created_by_id"`
+	CreatedBy   User         `gorm:"foreignKey:CreatedByID" json:"created_by"`
+	Memberships []Membership `gorm:"foreignKey:HouseholdID" json:"memberships"`
 }
 
-type Expenses struct {
+type Membership struct {
+	ID          uint      `gorm:"primaryKey" json:"id"`
+	UserID      uint      `json:"user_id"`
+	User        User      `gorm:"foreignKey:UserID" json:"user"`
+	HouseholdID uint      `json:"household_id"`
+	Household   Household `gorm:"foreignKey:HouseholdID" json:"household"`
+	Role        string    `json:"role"`
+}
+
+type Expense struct {
 	ID       uint      `gorm:"primaryKey" json:"id"`
 	Amount   float32   `json:"amount"`
 	Category string    `json:"category"`
 	Date     time.Time `json:"date"`
-	//UserID    uint   `json:"user_id"`
-	//HouseholdsID    uint   `json:"households_id"`
-}
-
-type Membership struct {
-	ID uint `gorm:"primaryKey" json:"id"`
 	//UserID    uint   `json:"user_id"`
 	//HouseholdsID    uint   `json:"households_id"`
 }
@@ -47,25 +53,27 @@ type Session struct {
 type UserStore interface {
 	CreateUser(username string, email string, password string) error
 	GetUser(email string) (*User, error)
+	GetUserByUsername(username string) (*User, error)
+	GetAllUsers() ([]User, error)
 	EmailExists(email string) (bool, error)
 	UsernameExists(username string) (bool, error)
 }
 
-type HouseholdsStore interface {
-	CreateHousehold(householdsName string, createdAt time.Time) error
-	GetHousehold(householdsName string, createdAt time.Time) (*Households, error)
+type HouseholdStore interface {
+	CreateHousehold(name string, description string, createdByID uint) (uint, error)
+	GetHouseholdsByUserID(userID uint) ([]Household, error)
+	NameExists(name string) (bool, error)
+}
+
+type MembershipStore interface {
+	CreateMembership(userID uint, householdID uint, role string) error
+	//GetByUserAndHousehold(userID, householdID uint) (*Membership, error)
 }
 
 type ExpensesStore interface {
 	// CreateExpense TODO: check
 	CreateExpense(amount float32, category string, date time.Time) error
-	GetExpense(amount float32, category string, date time.Time) (*Expenses, error)
-}
-
-type MembershipStore interface {
-	// CreateMembership TODO: check
-	CreateMembership(user User, households Households) error
-	GetMembership(user User, households Households) (*Membership, error)
+	GetExpense(amount float32, category string, date time.Time) (*Expense, error)
 }
 
 type ReportStore interface {

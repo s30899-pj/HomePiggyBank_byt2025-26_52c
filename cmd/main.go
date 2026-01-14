@@ -12,6 +12,7 @@ import (
 
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/auth"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/basic"
+	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/expenses"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/households"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/hash/passwordhash"
 	m "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/middleware"
@@ -46,6 +47,18 @@ func main() {
 		},
 	)
 
+	householdStore := dbstore.NewHouseholdStore(
+		dbstore.NewHouseholdStoreParams{
+			DB: db,
+		},
+	)
+
+	membershipStore := dbstore.NewMembershipStore(
+		dbstore.NewMembershipStoreParams{
+			DB: db,
+		},
+	)
+
 	fileServer := http.FileServer(http.Dir("./web/static"))
 	r.Get("/static/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "public, max-age=31536000")
@@ -53,7 +66,6 @@ func main() {
 	}))
 	authMiddleware := m.NewAuthMiddleware(sessionStore, cfg.SessionCookieName)
 
-	//TODO: implementation core logic
 	r.Group(func(r chi.Router) {
 		r.Use(
 			middleware.Logger,
@@ -84,7 +96,18 @@ func main() {
 
 		r.Get("/home", basic.NewGetBasicHandler().GetHome)
 
-		r.Get("/households", households.NewGetHouseholdsHandler().GetHouseholds)
+		r.Get("/households", households.NewGetHouseholdsHandler(households.GetHouseholdsHandlerParams{
+			HouseholdStore: householdStore,
+			UserStore:      userStore,
+		}).GetHouseholds)
+
+		r.Post("/household", households.NewPostHouseholdsHandler(households.PostHouseholdsHandlerParams{
+			HouseholdStore:  householdStore,
+			MembershipStore: membershipStore,
+			UserStore:       userStore,
+		}).PostHousehold)
+
+		r.Get("/expenses", expenses.NewGetExpensesHandler().GetExpenses)
 	})
 
 	killSig := make(chan os.Signal, 1)
