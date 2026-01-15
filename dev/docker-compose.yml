@@ -1,0 +1,12 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: dev/Dockerfile
+    ports:
+      - "4000:8080"
+    volumes:
+      - app-data:/app
+
+volumes:
+  app-data:

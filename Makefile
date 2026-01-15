@@ -38,22 +38,30 @@ build:
 	make templ-generate
 	go build -o ./bin/$(APP_NAME) ./cmd/main.go
 
-#.PHONY: docker-build
-#docker-build:
-#	docker-compose -f ./dev/docker-compose.yml build
-#
-#.PHONY: docker-up
-#docker-up:
-#	docker-compose -f ./dev/docker-compose.yml up
-#
-#.PHONY: docker-dev
-#docker-dev:
-#	docker-compose -f ./dev/docker-compose.yml -f ./dev/docker-compose.dev.yml up
-#
-#.PHONY: docker-down
-#docker-down:
-#	docker-compose -f ./dev/docker-compose.yml down
-#
-#.PHONY: docker-clean
-#docker-clean:
-#	docker-compose -f ./dev/docker-compose.yml down -v --rmi all
+
+
+.PHONY: tailwind-build-for-docker
+tailwind-build-for-docker:
+	tailwindcss -i ./web/input.css -o ./web/static/css/style.min.css --minify
+
+.PHONY: build-for-docker
+build-for-docker:
+	make tailwind-build-for-docker
+	make templ-generate
+	go build -o ./bin/$(APP_NAME) ./cmd/main.go
+
+.PHONY: docker-build
+docker-build:
+	docker-compose -f ./dev/docker-compose.yml build
+
+.PHONY: docker-up
+docker-up:
+	docker-compose -f ./dev/docker-compose.yml up
+
+.PHONY: docker-down
+docker-down:
+	docker-compose -f ./dev/docker-compose.yml down
+
+.PHONY: docker-clean
+docker-clean:
+	docker-compose -f ./dev/docker-compose.yml down -v --rmi all
