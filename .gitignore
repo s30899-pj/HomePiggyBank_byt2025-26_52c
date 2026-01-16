@@ -13,3 +13,5 @@ tailwindcss
 tailwindcss.exe
 
 .DS_Store
+
+*.pdf

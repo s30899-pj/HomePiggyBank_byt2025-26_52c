@@ -86,9 +86,14 @@ type ExpenseShare struct {
 
 type Report struct {
 	ID             uint      `gorm:"primaryKey" json:"id"`
-	PeriodOfDates  time.Time `json:"period_of_dates"`
-	TotalExpenses  float32   `json:"total_expenses"`
-	GenerationDate time.Time `json:"GenerationDate"`
+	UserID         uint      `json:"user_id"`
+	User           User      `gorm:"foreignKey:UserID" json:"user"`
+	PeriodStart    time.Time `json:"period_start"`
+	PeriodEnd      time.Time `json:"period_end"`
+	TotalExpenses  float64   `json:"total_expenses"`
+	PaymentStatus  string    `json:"payment_status"`
+	GenerationDate time.Time `json:"generation_date"`
+	FileName       string    `json:"file_name"`
 }
 
 type UserStore interface {
@@ -132,6 +137,7 @@ type ExpenseShareStore interface {
 }
 
 type ReportStore interface {
-	CreateReport(periodOfDates time.Time, totalExpenses float32, generationDate time.Time) error
-	GetReport(periodOfDates time.Time, totalExpenses float32, generationDate time.Time) (*Report, error)
+	CreateReport(userID uint, from, to time.Time, paymentStatus string) (Report, error)
+	GetReportsByUser(userID uint) ([]Report, error)
+	GetReportByFileName(fileName string) (Report, error)
 }

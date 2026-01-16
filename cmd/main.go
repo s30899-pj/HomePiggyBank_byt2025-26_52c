@@ -17,6 +17,7 @@ import (
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/basic"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/expenses"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/households"
+	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/reports"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/hash/passwordhash"
 	m "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/middleware"
 	database "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store/db"
@@ -67,7 +68,14 @@ func main() {
 	expenseShareStore := dbstore.NewExpenseShareStore(
 		dbstore.NewExpenseShareStoreParams{
 			DB: db,
-		})
+		},
+	)
+
+	reportStore := dbstore.NewReportStore(
+		dbstore.NewReportStoreParams{
+			DB: db,
+		},
+	)
 
 	fileServer := http.FileServer(http.Dir("./web/static"))
 	r.Get("/static/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -148,6 +156,19 @@ func main() {
 		r.Post("/expense/{id}/pay", expenses.NewPostExpenseShareHandler(expenses.PostExpenseShareHandlerParams{
 			ExpenseShareStore: expenseShareStore,
 		}).PostPayExpenseShare)
+
+		//REPORTS
+		r.Get("/reports", reports.NewGetReportsHandler(reports.GetReportsHandlerParams{
+			ReportStore: reportStore,
+		}).GetReports)
+
+		r.Get("/reports/files/{file}", reports.NewGetReportHandler(reports.GetReportHandlerParams{
+			ReportStore: reportStore,
+		}).DownloadPDF)
+
+		r.Post("/report", reports.NewPostReportsHandler(reports.PostReportHandlerParams{
+			ReportStore: reportStore,
+		}).PostGenerateReport)
 	})
 
 	killSig := make(chan os.Signal, 1)
