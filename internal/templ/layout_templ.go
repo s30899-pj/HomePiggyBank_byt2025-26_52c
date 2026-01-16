@@ -44,7 +44,7 @@ func header(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><link rel=\"icon\" type=\"image/png\" href=\"/static/img/favicon/favicon-96x96.png\" sizes=\"96x96\"><script src=\"/static/script/htmx.min.js\"></script><script src=\"/static/script/response-targets.js\"></script><script defer src=\"/static/script/alpine-focus.min.js\"></script><script defer src=\"/static/script/alpine.min.js\"></script><script src=\"/static/script/chart.umd.min.js\"></script><script src=\"/static/script/path-change.js\"></script><link rel=\"stylesheet\" href=\"/static/css/style.css\"></head>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><link rel=\"icon\" type=\"image/png\" href=\"/static/img/favicon/favicon-96x96.png\" sizes=\"96x96\"><script src=\"/static/script/htmx.min.js\"></script><script src=\"/static/script/response-targets.js\"></script><script defer src=\"/static/script/alpine-focus.min.js\"></script><script defer src=\"/static/script/alpine.min.js\"></script><script src=\"/static/script/chart.umd.min.js\"></script><script src=\"/static/script/path-change.js\"></script><link rel=\"stylesheet\" href=\"/static/css/style.min.css\"></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -80,7 +80,7 @@ func sidebar(user *store.User) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(user.Username)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/layout.templ`, Line: 123, Col: 108}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/layout.templ`, Line: 124, Col: 108}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -93,7 +93,7 @@ func sidebar(user *store.User) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(user.Email)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/layout.templ`, Line: 125, Col: 18}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/layout.templ`, Line: 126, Col: 18}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {

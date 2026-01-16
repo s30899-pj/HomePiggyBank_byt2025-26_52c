@@ -78,10 +78,12 @@ func main() {
 	)
 
 	fileServer := http.FileServer(http.Dir("./web/static"))
+
 	r.Get("/static/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "public, max-age=31536000")
 		http.StripPrefix("/static/", fileServer).ServeHTTP(w, r)
 	}))
+
 	authMiddleware := m.NewAuthMiddleware(sessionStore, cfg.SessionCookieName)
 
 	r.Group(func(r chi.Router) {
