@@ -39,10 +39,10 @@ templ expensesChart() {
                 maintainAspectRatio: false,
                 cutout: '65%',
                 animation: {
-                        animateRotate: true,
-                        animateScale: true,
-                        duration: 1200,
-                        easing: 'easeOutQuart',
+                    animateRotate: true,
+                    animateScale: true,
+                    duration: 1200,
+                    easing: 'easeOutQuart',
                 },
                 layout: {
                     padding: 20,
@@ -71,115 +71,132 @@ templ expensesChart() {
             }
         });
     }
-    </script>
+</script>
 }
 
 templ expensesToolbar() {
-	<div x-data="{modalIsOpen: false}">
-		<button x-on:click="modalIsOpen = true" type="button" class="inline-flex justify-center items-center gap-2 whitespace-nowrap rounded-radius bg-primary border border-primary dark:border-primary-dark px-4 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark">
-			<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="size-5 fill-on-primary dark:fill-on-primary-dark" fill="currentColor">
-				<path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd"></path>
-			</svg>
-			Create expense
-		</button>
-		<div x-cloak x-show="modalIsOpen" x-transition.opacity.duration.200ms x-trap.inert.noscroll="modalIsOpen" x-on:keydown.esc.window="modalIsOpen = false" x-on:click.self="modalIsOpen = false" class="fixed inset-0 z-30 flex items-end justify-center bg-black/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8" role="dialog" aria-modal="true" aria-labelledby="defaultModalTitle">
-			<div x-show="modalIsOpen" x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity" x-transition:enter-start="opacity-0 scale-50" x-transition:enter-end="opacity-100 scale-100" class="flex max-w-lg flex-col gap-4 overflow-hidden rounded-radius border border-outline bg-surface text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark">
-				<div class="flex items-center justify-between border-b border-outline bg-surface-alt/60 p-4 dark:border-outline-dark dark:bg-surface-dark/20">
-					<h3 id="defaultModalTitle" class="font-semibold tracking-wide text-on-surface-strong dark:text-on-surface-dark-strong">Create expense</h3>
-					<button x-on:click="modalIsOpen = false" aria-label="close modal">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="1.4" class="w-5 h-5">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-						</svg>
-					</button>
-				</div>
-				<div class="px-4 py-8">
-					<p>As a token of appreciation, we have an exclusive offer just for you. Upgrade your account now to unlock premium features and enjoy a seamless experience.</p>
-				</div>
-				<div class="flex flex-col-reverse justify-between gap-2 border-t border-outline bg-surface-alt/60 p-4 dark:border-outline-dark dark:bg-surface-dark/20 sm:flex-row sm:items-center md:justify-end">
-					<button x-on:click="modalIsOpen = false" type="button" class="whitespace-nowrap rounded-radius px-4 py-2 text-center text-sm font-medium tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark">Cancel</button>
-					<button x-on:click="modalIsOpen = false" type="button" class="whitespace-nowrap rounded-radius bg-primary border border-primary dark:border-primary-dark px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark">Create</button>
-				</div>
-			</div>
-		</div>
-	</div>
+
 }
 
 templ expensesList() {
-	<div x-data="{ checkAll : false }" class="overflow-hidden w-full overflow-x-auto rounded-radius border border-outline dark:border-outline-dark">
-		<table class="w-full text-left text-sm text-on-surface dark:text-on-surface-dark">
-			<thead class="border-b border-outline bg-surface-alt text-on-surface-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">
-				<tr>
-					<th scope="col" class="p-4">
-						<label for="checkAll" class="flex items-center text-on-surface dark:text-on-surface-dark ">
-							<div class="relative flex items-center">
-								<input type="checkbox" x-model="checkAll" id="checkAll" class="before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark"/>
-								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="4" class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark">
-									<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
-								</svg>
-							</div>
-						</label>
-					</th>
-					<th scope="col" class="p-4">Expense ID</th>
-					<th scope="col" class="p-4">Name</th>
-					<th scope="col" class="p-4">Created by</th>
-					<th scope="col" class="p-4">Created at</th>
-					<th scope="col" class="p-4">Options</th>
-				</tr>
-			</thead>
-			<tbody class="divide-y divide-outline dark:divide-outline-dark">
-				<tr>
-					<td class="p-4">
-						<label for="user2335" class="flex items-center text-on-surface dark:text-on-surface-dark ">
-							<div class="relative flex items-center">
-								<input type="checkbox" id="user2335" class="before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark" :checked="checkAll"/>
-								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="4" class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark">
-									<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
-								</svg>
-							</div>
-						</label>
-					</td>
-					<td class="p-4">2335</td>
-					<td class="p-4">Alice Brown</td>
-					<td class="p-4">alice.brown@gmail.com</td>
-					<td class="p-4">10:10</td>
-					<td class="p-4"><button type="button" class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark">Edit</button></td>
-				</tr>
-				<tr>
-					<td class="p-4">
-						<label for="user2342" class="flex items-center text-on-surface dark:text-on-surface-dark ">
-							<div class="relative flex items-center">
-								<input type="checkbox" id="user2342" class="before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark" :checked="checkAll"/>
-								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="4" class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark">
-									<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
-								</svg>
-							</div>
-						</label>
-					</td>
-					<td class="p-4">2342</td>
-					<td class="p-4">Sarah Adams</td>
-					<td class="p-4">s.adams@gmail.com</td>
-					<td class="p-4">10:10</td>
-					<td class="p-4"><button type="button" class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark">Edit</button></td>
-				</tr>
-				<tr>
-					<td class="p-4">
-						<label for="user2338" class="flex items-center text-on-surface dark:text-on-surface-dark ">
-							<div class="relative flex items-center">
-								<input type="checkbox" id="user2338" class="before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark" :checked="checkAll"/>
-								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="4" class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark">
-									<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
-								</svg>
-							</div>
-						</label>
-					</td>
-					<td class="p-4">2338</td>
-					<td class="p-4">Bob Johnson</td>
-					<td class="p-4">johnson.bob@outlook.com</td>
-					<td class="p-4">10:10</td>
-					<td class="p-4"><button type="button" class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark">Edit</button></td>
-				</tr>
-			</tbody>
-		</table>
+	<div class="h-full flex flex-col rounded-radius border border-outline dark:border-outline-dark">
+		<div class="flex-1 overflow-y-auto">
+			<table class="w-full text-left text-sm text-on-surface dark:text-on-surface-dark">
+				<thead
+					class="sticky top-0 z-10 border-b border-outline bg-surface-alt
+					text-on-surface-strong dark:border-outline-dark
+					dark:bg-surface-dark-alt dark:text-on-surface-dark-strong"
+				>
+					<tr>
+						<th scope="col" class="p-4">Expense ID</th>
+						<th scope="col" class="p-4">Name</th>
+						<th scope="col" class="p-4">Household</th>
+						<th scope="col" class="p-4">Created on</th>
+						<th scope="col" class="p-4">Options</th>
+					</tr>
+				</thead>
+				<tbody class="divide-y divide-outline dark:divide-outline-dark">
+					<tr>
+						<td class="p-4">2335</td>
+						<td class="p-4">Alice Brown</td>
+						<td class="p-4">alice.brown@gmail.com</td>
+						<td class="p-4">10:10</td>
+						<td class="p-4">
+							<button
+								type="button"
+								class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark"
+							>
+								Edit
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<td class="p-4">2335</td>
+						<td class="p-4">Alice Brown</td>
+						<td class="p-4">alice.brown@gmail.com</td>
+						<td class="p-4">10:10</td>
+						<td class="p-4">
+							<button
+								type="button"
+								class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark"
+							>
+								Edit
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<td class="p-4">2335</td>
+						<td class="p-4">Alice Brown</td>
+						<td class="p-4">alice.brown@gmail.com</td>
+						<td class="p-4">10:10</td>
+						<td class="p-4">
+							<button
+								type="button"
+								class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark"
+							>
+								Edit
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<td class="p-4">2335</td>
+						<td class="p-4">Alice Brown</td>
+						<td class="p-4">alice.brown@gmail.com</td>
+						<td class="p-4">10:10</td>
+						<td class="p-4">
+							<button
+								type="button"
+								class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark"
+							>
+								Edit
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<td class="p-4">2335</td>
+						<td class="p-4">Alice Brown</td>
+						<td class="p-4">alice.brown@gmail.com</td>
+						<td class="p-4">10:10</td>
+						<td class="p-4">
+							<button
+								type="button"
+								class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark"
+							>
+								Edit
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<td class="p-4">2342</td>
+						<td class="p-4">Sarah Adams</td>
+						<td class="p-4">s.adams@gmail.com</td>
+						<td class="p-4">10:10</td>
+						<td class="p-4">
+							<button
+								type="button"
+								class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark"
+							>
+								Edit
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<td class="p-4">2338</td>
+						<td class="p-4">Bob Johnson</td>
+						<td class="p-4">johnson.bob@outlook.com</td>
+						<td class="p-4">10:10</td>
+						<td class="p-4">
+							<button
+								type="button"
+								class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark"
+							>
+								Edit
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
 }
 

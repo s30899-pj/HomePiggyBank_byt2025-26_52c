@@ -9,6 +9,13 @@ type User struct {
 	Password string `json:"-"`
 }
 
+type Session struct {
+	ID        uint   `gorm:"primaryKey" json:"id"`
+	SessionID string `json:"session_id"`
+	UserID    uint   `json:"user_id"`
+	User      User   `gorm:"foreignKey:UserID" json:"user"`
+}
+
 type Household struct {
 	ID          uint         `gorm:"primaryKey" json:"id"`
 	Name        string       `json:"name"`
@@ -27,13 +34,53 @@ type Membership struct {
 	Role        string    `json:"role"`
 }
 
+type ExpenseCategory string
+
+const (
+	CategoryFood          ExpenseCategory = "food"
+	CategoryRent          ExpenseCategory = "rent"
+	CategoryUtilities     ExpenseCategory = "utilities"
+	CategoryTransport     ExpenseCategory = "transport"
+	CategoryEntertainment ExpenseCategory = "entertainment"
+	CategoryHealth        ExpenseCategory = "health"
+	CategoryShopping      ExpenseCategory = "shopping"
+	CategoryOther         ExpenseCategory = "other"
+)
+
+func (c ExpenseCategory) IsValid() bool {
+	switch c {
+	case CategoryFood,
+		CategoryRent,
+		CategoryUtilities,
+		CategoryTransport,
+		CategoryEntertainment,
+		CategoryHealth,
+		CategoryShopping,
+		CategoryOther:
+		return true
+	}
+	return false
+}
+
 type Expense struct {
-	ID       uint      `gorm:"primaryKey" json:"id"`
-	Amount   float32   `json:"amount"`
-	Category string    `json:"category"`
-	Date     time.Time `json:"date"`
-	//UserID    uint   `json:"user_id"`
-	//HouseholdsID    uint   `json:"households_id"`
+	ID          uint            `gorm:"primaryKey" json:"id"`
+	Name        string          `json:"name"`
+	Amount      float64         `json:"amount"`
+	Category    ExpenseCategory `json:"category"`
+	CreatedOn   time.Time       `json:"created_on"`
+	CreatedByID uint            `json:"created_by_id"`
+	CreatedBy   User            `gorm:"foreignKey:CreatedByID" json:"created_by"`
+	HouseholdID uint            `json:"household_id"`
+	Household   Household       `gorm:"foreignKey:HouseholdID" json:"household"`
+}
+
+type ExpenseShare struct {
+	ID        uint    `gorm:"primaryKey" json:"id"`
+	ExpenseID uint    `json:"expense_id"`
+	Expense   Expense `gorm:"foreignKey:ExpenseID" json:"expense"`
+	UserID    uint    `json:"user_id"`
+	User      User    `gorm:"foreignKey:UserID" json:"user"`
+	Amount    float64 `json:"amount"`
 }
 
 type Report struct {
@@ -41,13 +88,6 @@ type Report struct {
 	PeriodOfDates  time.Time `json:"period_of_dates"`
 	TotalExpenses  float32   `json:"total_expenses"`
 	GenerationDate time.Time `json:"GenerationDate"`
-}
-
-type Session struct {
-	ID        uint   `gorm:"primaryKey" json:"id"`
-	SessionID string `json:"session_id"`
-	UserID    uint   `json:"user_id"`
-	User      User   `gorm:"foreignKey:UserID" json:"user"`
 }
 
 type UserStore interface {
@@ -59,30 +99,35 @@ type UserStore interface {
 	UsernameExists(username string) (bool, error)
 }
 
+type SessionStore interface {
+	CreateSession(session *Session) (*Session, error)
+	GetUserFromSession(sessionID string, userID string) (*User, error)
+	DeleteSession(userID uint) error
+}
+
 type HouseholdStore interface {
 	CreateHousehold(name string, description string, createdByID uint) (uint, error)
 	GetHouseholdsByUserID(userID uint) ([]Household, error)
+	GetOwnedHouseholdsByUserID(userID uint) ([]Household, error)
 	NameExists(name string) (bool, error)
 }
 
 type MembershipStore interface {
 	CreateMembership(userID uint, householdID uint, role string) error
-	//GetByUserAndHousehold(userID, householdID uint) (*Membership, error)
+	GetMembersByHouseholdID(householdID uint) ([]Membership, error)
 }
 
-type ExpensesStore interface {
-	// CreateExpense TODO: check
-	CreateExpense(amount float32, category string, date time.Time) error
-	GetExpense(amount float32, category string, date time.Time) (*Expense, error)
+type ExpenseStore interface {
+	CreateExpense(name string, amount float64, category ExpenseCategory, createdOn time.Time, householdID, createdByID uint) (uint, error)
+	NameExists(name string) (bool, error)
+	GetExpensesByHouseholdID(householdID uint) ([]Expense, error)
+}
+
+type ExpenseShareStore interface {
+	CreateExpenseShare(expenseID uint, userID uint, amount float64) error
 }
 
 type ReportStore interface {
 	CreateReport(periodOfDates time.Time, totalExpenses float32, generationDate time.Time) error
 	GetReport(periodOfDates time.Time, totalExpenses float32, generationDate time.Time) (*Report, error)
-}
-
-type SessionStore interface {
-	CreateSession(session *Session) (*Session, error)
-	GetUserFromSession(sessionID string, userID string) (*User, error)
-	DeleteSession(userID uint) error
 }

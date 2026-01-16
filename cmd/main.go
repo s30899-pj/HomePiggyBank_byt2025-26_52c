@@ -10,16 +10,15 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/config"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/auth"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/basic"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/expenses"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/core/households"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/hash/passwordhash"
 	m "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/middleware"
-
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/config"
 	database "github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store/db"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store/dbstore"
 )
@@ -59,6 +58,17 @@ func main() {
 		},
 	)
 
+	expenseStore := dbstore.NewExpenseStore(
+		dbstore.NewExpenseStoreParams{
+			DB: db,
+		},
+	)
+
+	expenseShareStore := dbstore.NewExpenseShareStore(
+		dbstore.NewExpenseShareStoreParams{
+			DB: db,
+		})
+
 	fileServer := http.FileServer(http.Dir("./web/static"))
 	r.Get("/static/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "public, max-age=31536000")
@@ -72,8 +82,12 @@ func main() {
 			authMiddleware.AddUserToContext,
 		)
 
+		//BASIC
 		r.Get("/", basic.NewGetBasicHandler().GetIndex)
 
+		r.Get("/home", basic.NewGetBasicHandler().GetHome)
+
+		//AUTH
 		r.Get("/register", auth.NewGetAuthHandler().GetRegister)
 
 		r.Post("/register", auth.NewPostRegisterHandler(auth.PostRegisterHandlerParams{
@@ -94,20 +108,37 @@ func main() {
 			SessionCookieName: cfg.SessionCookieName,
 		}).PostLogout)
 
-		r.Get("/home", basic.NewGetBasicHandler().GetHome)
-
+		//HOUSEHOLDS
 		r.Get("/households", households.NewGetHouseholdsHandler(households.GetHouseholdsHandlerParams{
 			HouseholdStore: householdStore,
 			UserStore:      userStore,
 		}).GetHouseholds)
 
-		r.Post("/household", households.NewPostHouseholdsHandler(households.PostHouseholdsHandlerParams{
+		r.Get("/household/{id}/members", households.NewGetHouseholdMembersHandler(households.GetHouseholdMembersHandlerParams{
+			MembershipStore: membershipStore,
+		}).GetHouseholdMembers)
+
+		r.Get("/household/{id}/expenses", households.NewGetHouseholdExpensesHandler(households.GetHouseholdExpensesHandlerParams{
+			ExpenseStore: expenseStore,
+		}).GetHouseholdExpenses)
+
+		r.Post("/household", households.NewPostHouseholdHandler(households.PostHouseholdHandlerParams{
 			HouseholdStore:  householdStore,
 			MembershipStore: membershipStore,
 			UserStore:       userStore,
 		}).PostHousehold)
 
-		r.Get("/expenses", expenses.NewGetExpensesHandler().GetExpenses)
+		//EXPENSES
+		r.Get("/expenses", expenses.NewGetExpensesHandler(expenses.GetExpensesHandlerParams{
+			HouseholdStore: householdStore,
+		}).GetExpenses)
+
+		r.Post("/expense", expenses.NewPostExpenseHandler(expenses.PostExpenseHandlerParams{
+			ExpenseStore:      expenseStore,
+			ExpenseShareStore: expenseShareStore,
+			MembershipStore:   membershipStore,
+			UserStore:         userStore,
+		}).PostExpense)
 	})
 
 	killSig := make(chan os.Signal, 1)

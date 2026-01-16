@@ -51,6 +51,17 @@ func (s *HouseholdStore) GetHouseholdsByUserID(userID uint) ([]store.Household, 
 	return households, err
 }
 
+func (s *HouseholdStore) GetOwnedHouseholdsByUserID(userID uint) ([]store.Household, error) {
+	var households []store.Household
+	err := s.db.Where("created_by_id = ?", userID).Find(&households).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return households, err
+}
+
 func (s *HouseholdStore) NameExists(name string) (bool, error) {
 	var household store.Household
 	err := s.db.Select("id").Where("name = ?", name).First(&household).Error

@@ -26,3 +26,14 @@ func (s *MembershipStore) CreateMembership(userID uint, householdID uint, role s
 		Role:        role,
 	}).Error
 }
+
+func (s *MembershipStore) GetMembersByHouseholdID(householdID uint) ([]store.Membership, error) {
+	var memberships []store.Membership
+
+	err := s.db.
+		Where("household_id = ?", householdID).
+		Preload("User").
+		Find(&memberships).Error
+
+	return memberships, err
+}
