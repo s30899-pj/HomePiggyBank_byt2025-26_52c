@@ -390,7 +390,7 @@ func HouseholdExpenses(expenses []store.Expense) templ.Component {
 			templ_7745c5c3_Var17 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<div class=\"h-full flex flex-col\"><div class=\"overflow-y-auto flex-1 rounded-radius border border-outline dark:border-outline-dark\"><table class=\"w-full text-left text-sm text-on-surface dark:text-on-surface-dark\"><thead class=\"sticky top-0 z-10 border-b border-outline bg-surface-alt\n\t\t\t\t\ttext-sm text-on-surface-strong dark:border-outline-dark\n\t\t\t\t\tdark:bg-surface-dark-alt dark:text-on-surface-dark-strong\"><tr><th scope=\"col\" class=\"p-4\">ID</th><th scope=\"col\" class=\"p-4\">Name</th><th scope=\"col\" class=\"p-4\">Amount</th><th scope=\"col\" class=\"p-4\">Category</th><th scope=\"col\" class=\"p-4\">Created By</th></tr></thead> <tbody class=\"divide-y divide-outline dark:divide-outline-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<div class=\"h-full flex flex-col\"><div class=\"overflow-y-auto flex-1 rounded-radius border border-outline dark:border-outline-dark\"><table class=\"w-full text-left text-sm text-on-surface dark:text-on-surface-dark\"><thead class=\"sticky top-0 z-10 border-b border-outline bg-surface-alt\n\t\t\t\t\ttext-sm text-on-surface-strong dark:border-outline-dark\n\t\t\t\t\tdark:bg-surface-dark-alt dark:text-on-surface-dark-strong\"><tr><th scope=\"col\" class=\"p-4\">Name</th><th scope=\"col\" class=\"p-4\">Amount</th><th scope=\"col\" class=\"p-4\">Category</th><th scope=\"col\" class=\"p-4\">Created By</th></tr></thead> <tbody class=\"divide-y divide-outline dark:divide-outline-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -406,9 +406,9 @@ func HouseholdExpenses(expenses []store.Expense) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var18 string
-				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(e.ID)
+				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(e.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/households.templ`, Line: 441, Col: 30}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/households.templ`, Line: 440, Col: 32}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
@@ -419,9 +419,9 @@ func HouseholdExpenses(expenses []store.Expense) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var19 string
-				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(e.Name)
+				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%.2f", e.Amount))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/households.templ`, Line: 442, Col: 32}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/households.templ`, Line: 441, Col: 55}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -432,9 +432,9 @@ func HouseholdExpenses(expenses []store.Expense) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var20 string
-				templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%.2f", e.Amount))
+				templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(e.Category)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/households.templ`, Line: 443, Col: 55}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/households.templ`, Line: 442, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 				if templ_7745c5c3_Err != nil {
@@ -445,34 +445,21 @@ func HouseholdExpenses(expenses []store.Expense) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var21 string
-				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(e.Category)
+				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(e.CreatedBy.Username)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/households.templ`, Line: 444, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/households.templ`, Line: 443, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</td><td class=\"p-4\">")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var22 string
-				templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(e.CreatedBy.Username)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templ/households.templ`, Line: 445, Col: 46}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</td></tr>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</td></tr>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</tbody></table></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</tbody></table></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -1,39 +1,165 @@
 package templ
 
-templ expensesChart() {
-	<canvas
-		id="expensesDonut"
-		class="w-full h-full"
-	></canvas>
+import (
+	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store"
+	"strconv"
+)
+
+templ expensesChartToolbar() {
+	<select
+		class="rounded px-2 py-1"
+		x-model="mode"
+		hx-get="/expenses/chart"
+		hx-target="#expenses-chart"
+		hx-trigger="change delay:50ms"
+		name="mode"
+	>
+		<option value="" disabled>Choose view</option>
+		<option value="category">By category</option>
+		<option value="household">By household</option>
+		<option value="status">By status</option>
+	</select>
+}
+
+templ expensesList(shares []store.ExpenseShare) {
+	<div class="h-full flex flex-col rounded-radius border border-outline dark:border-outline-dark">
+		<div class="flex-1 overflow-y-auto">
+			<table class="w-full text-left text-sm text-on-surface dark:text-on-surface-dark">
+				<thead
+					class="sticky top-0 z-10 border-b border-outline bg-surface-alt
+					text-on-surface-strong dark:border-outline-dark
+					dark:bg-surface-dark-alt dark:text-on-surface-dark-strong"
+				>
+					<tr>
+						<th scope="col" class="p-4">Name</th>
+						<th scope="col" class="p-4">Category</th>
+						<th scope="col" class="p-4">Household</th>
+						<th scope="col" class="p-4">Amount</th>
+						<th scope="col" class="p-4">Created on</th>
+						<th scope="col" class="p-4">Action</th>
+					</tr>
+				</thead>
+				<tbody class="divide-y divide-outline dark:divide-outline-dark">
+					for _, s := range shares {
+						<tr>
+							<td class="p-4">{ s.Expense.Name }</td>
+							<td class="p-4">{ s.Expense.Category }</td>
+							<td class="p-4">{ s.Expense.Household.Name }</td>
+							<td class="p-4">{ s.Amount }</td>
+							<td class="p-4">{ s.Expense.CreatedOn.Format("02.01.2006") }</td>
+							<td class="p-4">
+								if s.Paid {
+									<span class="text-green-600 font-semibold">Paid</span>
+								} else {
+									<button
+										type="button"
+										hx-post={ "/expense/" + strconv.Itoa(int(s.Expense.ID)) + "/pay" }
+										hx-vals={ "{ \"user_id\": \"" + strconv.Itoa(int(s.User.ID)) + "\" }" }
+										hx-swap="outerHTML"
+										class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark"
+									>
+										Pay now
+									</button>
+								}
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+}
+
+templ Expenses(isHX bool, shares []store.ExpenseShare) {
+	if isHX {
+		<title>Expenses | Home Piggy Bank</title>
+	}
+	<div class="flex flex-col h-full w-full gap-4">
+		<div
+			x-data="{ mode: '' }"
+			class="flex flex-col h-1/2 rounded-radius overflow-hidden border border-outline
+        	       bg-surface-alt text-on-surface
+        	       dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark"
+		>
+			<div class="flex items-center justify-end p-4 border-b border-outline dark:border-outline-dark">
+				@expensesChartToolbar()
+			</div>
+			<div class="flex-1 p-4 overflow-hidden flex items-center justify-center">
+				<div
+					x-show="mode === ''"
+					class="text-center text-sm text-on-surface-muted"
+				>
+					Choose how you want to view your expenses.
+				</div>
+				<div
+					id="expenses-chart"
+					x-show="mode !== ''"
+					x-transition
+					x-cloak
+					class="h-full w-full"
+				></div>
+			</div>
+		</div>
+		<div
+			class="flex-1 min-h-0 rounded-radius overflow-hidden border border-outline
+        	        bg-surface-alt text-on-surface
+        	        dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark"
+		>
+			<div class="h-full overflow-auto p-4">
+				@expensesList(shares)
+			</div>
+		</div>
+	</div>
+}
+
+templ ExpensesChart(labels []string, values []float64) {
+	<canvas id="expensesDonut" class="w-full h-full"></canvas>
 	<script>
-    function initChart() {
-        const canvas = document.getElementById('expensesDonut');
-        if (!canvas) return;
+        function initChart(labels, values) {
+            const canvas = document.getElementById("expensesDonut");
+            if (!canvas) return;
 
-        const ctx = canvas.getContext('2d');
+            if (!labels || !labels.length) {
+                canvas.parentElement.innerHTML =
+                    '<div class="flex items-center justify-center h-full text-sm opacity-60">No data available</div>';
+                return;
+            }
 
-        const textColor = getComputedStyle(canvas.parentElement).color;
+            const ctx = canvas.getContext("2d");
+            const textColor = getComputedStyle(canvas.parentElement).color;
 
-        if (canvas._chart) {
-            canvas._chart.destroy();
-        }
+            if (canvas._chart) {
+                canvas._chart.destroy();
+            }
 
-        canvas._chart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Savings', 'Expenses', 'Investments'],
-                datasets: [{
-                    data: [40, 30, 30],
-                    backgroundColor: [
-                        'rgba(54, 162, 235, 0.75)',
-                        'rgba(255, 99, 132, 0.75)',
-                        'rgba(255, 206, 86, 0.75)'
-                    ],
-                    borderColor: textColor,
-                    borderWidth: 2,
-                    hoverOffset: 30
-                }]
-            },
+            canvas._chart = new Chart(ctx, {
+                            type: "doughnut",
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    data: values,
+                                    backgroundColor: [
+                                        "rgba(54, 162, 235, 0.75)",
+                                        "rgba(255, 99, 132, 0.75)",
+                                        "rgba(255, 206, 86, 0.75)",
+                                        "rgba(75, 192, 192, 0.75)",
+                                        "rgba(153, 102, 255, 0.75)",
+                                        "rgba(255, 159, 64, 0.75)",
+                                        "rgba(199, 199, 199, 0.75)",
+                                        "rgba(255, 99, 255, 0.75)",
+                                        "rgba(99, 255, 132, 0.75)",
+                                        "rgba(54, 162, 100, 0.75)",
+                                        "rgba(100, 54, 162, 0.75)",
+                                        "rgba(255, 206, 150, 0.75)",
+                                        "rgba(255, 150, 206, 0.75)",
+                                        "rgba(150, 206, 255, 0.75)",
+                                        "rgba(200, 200, 50, 0.75)"
+                                    ],
+                                    borderColor: textColor,
+                                    borderWidth: 2,
+                                    hoverOffset: 30
+                                }]
+                            },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -71,152 +197,6 @@ templ expensesChart() {
             }
         });
     }
+    initChart({{ labels }}, {{ values }});
 </script>
-}
-
-templ expensesToolbar() {
-
-}
-
-templ expensesList() {
-	<div class="h-full flex flex-col rounded-radius border border-outline dark:border-outline-dark">
-		<div class="flex-1 overflow-y-auto">
-			<table class="w-full text-left text-sm text-on-surface dark:text-on-surface-dark">
-				<thead
-					class="sticky top-0 z-10 border-b border-outline bg-surface-alt
-					text-on-surface-strong dark:border-outline-dark
-					dark:bg-surface-dark-alt dark:text-on-surface-dark-strong"
-				>
-					<tr>
-						<th scope="col" class="p-4">Expense ID</th>
-						<th scope="col" class="p-4">Name</th>
-						<th scope="col" class="p-4">Household</th>
-						<th scope="col" class="p-4">Created on</th>
-						<th scope="col" class="p-4">Options</th>
-					</tr>
-				</thead>
-				<tbody class="divide-y divide-outline dark:divide-outline-dark">
-					<tr>
-						<td class="p-4">2335</td>
-						<td class="p-4">Alice Brown</td>
-						<td class="p-4">alice.brown@gmail.com</td>
-						<td class="p-4">10:10</td>
-						<td class="p-4">
-							<button
-								type="button"
-								class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark"
-							>
-								Edit
-							</button>
-						</td>
-					</tr>
-					<tr>
-						<td class="p-4">2335</td>
-						<td class="p-4">Alice Brown</td>
-						<td class="p-4">alice.brown@gmail.com</td>
-						<td class="p-4">10:10</td>
-						<td class="p-4">
-							<button
-								type="button"
-								class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark"
-							>
-								Edit
-							</button>
-						</td>
-					</tr>
-					<tr>
-						<td class="p-4">2335</td>
-						<td class="p-4">Alice Brown</td>
-						<td class="p-4">alice.brown@gmail.com</td>
-						<td class="p-4">10:10</td>
-						<td class="p-4">
-							<button
-								type="button"
-								class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark"
-							>
-								Edit
-							</button>
-						</td>
-					</tr>
-					<tr>
-						<td class="p-4">2335</td>
-						<td class="p-4">Alice Brown</td>
-						<td class="p-4">alice.brown@gmail.com</td>
-						<td class="p-4">10:10</td>
-						<td class="p-4">
-							<button
-								type="button"
-								class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark"
-							>
-								Edit
-							</button>
-						</td>
-					</tr>
-					<tr>
-						<td class="p-4">2335</td>
-						<td class="p-4">Alice Brown</td>
-						<td class="p-4">alice.brown@gmail.com</td>
-						<td class="p-4">10:10</td>
-						<td class="p-4">
-							<button
-								type="button"
-								class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark"
-							>
-								Edit
-							</button>
-						</td>
-					</tr>
-					<tr>
-						<td class="p-4">2342</td>
-						<td class="p-4">Sarah Adams</td>
-						<td class="p-4">s.adams@gmail.com</td>
-						<td class="p-4">10:10</td>
-						<td class="p-4">
-							<button
-								type="button"
-								class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark"
-							>
-								Edit
-							</button>
-						</td>
-					</tr>
-					<tr>
-						<td class="p-4">2338</td>
-						<td class="p-4">Bob Johnson</td>
-						<td class="p-4">johnson.bob@outlook.com</td>
-						<td class="p-4">10:10</td>
-						<td class="p-4">
-							<button
-								type="button"
-								class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark"
-							>
-								Edit
-							</button>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-}
-
-templ Expenses(isHX bool) {
-	if isHX {
-		<title>Expenses | Home Piggy Bank</title>
-	}
-	<div class="flex flex-col h-full w-full gap-4">
-		<div class="h-1/2 p-4 rounded-radius overflow-hidden border border-outline  bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark">
-			<div x-data x-init="$nextTick(() => initChart())" class="h-full w-full">
-				@expensesChart()
-			</div>
-		</div>
-		<div class="flex flex-col flex-1 rounded-radius overflow-hidden border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark">
-			<div class="flex items-center justify-end p-4 border-b border-outline dark:border-outline-dark">
-				@expensesToolbar()
-			</div>
-			<div class="flex-1 overflow-auto p-4">
-				@expensesList()
-			</div>
-		</div>
-	</div>
 }

@@ -81,6 +81,7 @@ type ExpenseShare struct {
 	UserID    uint    `json:"user_id"`
 	User      User    `gorm:"foreignKey:UserID" json:"user"`
 	Amount    float64 `json:"amount"`
+	Paid      bool    `json:"paid"`
 }
 
 type Report struct {
@@ -125,6 +126,9 @@ type ExpenseStore interface {
 
 type ExpenseShareStore interface {
 	CreateExpenseShare(expenseID uint, userID uint, amount float64) error
+	GetExpenseShare(expenseID uint, userID uint) (ExpenseShare, error)
+	GetExpensesByUserID(userID uint) ([]ExpenseShare, error)
+	UpdateExpenseShare(share ExpenseShare) error
 }
 
 type ReportStore interface {

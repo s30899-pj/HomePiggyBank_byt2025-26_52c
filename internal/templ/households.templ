@@ -421,7 +421,6 @@ templ HouseholdExpenses(expenses []store.Expense) {
 					dark:bg-surface-dark-alt dark:text-on-surface-dark-strong"
 				>
 					<tr>
-						<th scope="col" class="p-4">ID</th>
 						<th scope="col" class="p-4">Name</th>
 						<th scope="col" class="p-4">Amount</th>
 						<th scope="col" class="p-4">Category</th>
@@ -438,7 +437,6 @@ templ HouseholdExpenses(expenses []store.Expense) {
 					} else {
 						for _, e := range expenses {
 							<tr>
-								<td class="p-4">{ e.ID }</td>
 								<td class="p-4">{ e.Name }</td>
 								<td class="p-4">{ fmt.Sprintf("%.2f", e.Amount) }</td>
 								<td class="p-4">{ e.Category }</td>

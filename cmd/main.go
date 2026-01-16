@@ -130,8 +130,13 @@ func main() {
 
 		//EXPENSES
 		r.Get("/expenses", expenses.NewGetExpensesHandler(expenses.GetExpensesHandlerParams{
-			HouseholdStore: householdStore,
+			HouseholdStore:    householdStore,
+			ExpenseShareStore: expenseShareStore,
 		}).GetExpenses)
+
+		r.Get("/expenses/chart", expenses.NewGetExpensesChartHandler(expenses.GetExpensesChartHandlerParams{
+			ExpenseShareStore: expenseShareStore,
+		}).GetExpensesChart)
 
 		r.Post("/expense", expenses.NewPostExpenseHandler(expenses.PostExpenseHandlerParams{
 			ExpenseStore:      expenseStore,
@@ -139,6 +144,10 @@ func main() {
 			MembershipStore:   membershipStore,
 			UserStore:         userStore,
 		}).PostExpense)
+
+		r.Post("/expense/{id}/pay", expenses.NewPostExpenseShareHandler(expenses.PostExpenseShareHandlerParams{
+			ExpenseShareStore: expenseShareStore,
+		}).PostPayExpenseShare)
 	})
 
 	killSig := make(chan os.Signal, 1)

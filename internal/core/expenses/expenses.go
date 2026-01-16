@@ -4,10 +4,12 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"sort"
 	"strconv"
 	"time"
 
 	templBasic "github.com/a-h/templ"
+	"github.com/go-chi/chi/v5"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/middleware"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/store"
 	"github.com/s30899-pj/HomePiggyBank_byt2025-26_52c/internal/templ"
@@ -15,16 +17,19 @@ import (
 )
 
 type GetExpensesHandler struct {
-	householdStore store.HouseholdStore
+	householdStore    store.HouseholdStore
+	expenseShareStore store.ExpenseShareStore
 }
 
 type GetExpensesHandlerParams struct {
-	HouseholdStore store.HouseholdStore
+	HouseholdStore    store.HouseholdStore
+	ExpenseShareStore store.ExpenseShareStore
 }
 
 func NewGetExpensesHandler(params GetExpensesHandlerParams) *GetExpensesHandler {
 	return &GetExpensesHandler{
-		householdStore: params.HouseholdStore,
+		householdStore:    params.HouseholdStore,
+		expenseShareStore: params.ExpenseShareStore,
 	}
 }
 
@@ -36,9 +41,17 @@ func (h *GetExpensesHandler) GetExpenses(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	shares, err := h.expenseShareStore.GetExpensesByUserID(user.ID)
+	if err != nil {
+		http.Error(w, "Cannot load expenses", 500)
+		return
+	}
+
+	shares = sortShares(shares)
+
 	isHX := r.Header.Get("HX-Request") == "true"
 
-	c := templ.Expenses(isHX)
+	c := templ.Expenses(isHX, shares)
 
 	var out templBasic.Component
 	if isHX {
@@ -47,12 +60,121 @@ func (h *GetExpensesHandler) GetExpenses(w http.ResponseWriter, r *http.Request)
 		out = templ.Layout(c, "Expenses | Home Piggy Bank", true, user)
 	}
 
-	err := out.Render(r.Context(), w)
+	err = out.Render(r.Context(), w)
 
 	if err != nil {
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
 		return
 	}
+}
+
+func sortShares(shares []store.ExpenseShare) []store.ExpenseShare {
+	sort.SliceStable(shares, func(i, j int) bool {
+		return !shares[i].Paid && shares[j].Paid
+	})
+	return shares
+}
+
+type GetExpensesChartHandler struct {
+	expenseShareStore store.ExpenseShareStore
+}
+
+type GetExpensesChartHandlerParams struct {
+	ExpenseShareStore store.ExpenseShareStore
+}
+
+func NewGetExpensesChartHandler(params GetExpensesChartHandlerParams) *GetExpensesChartHandler {
+	return &GetExpensesChartHandler{
+		expenseShareStore: params.ExpenseShareStore,
+	}
+}
+
+func (h *GetExpensesChartHandler) GetExpensesChart(w http.ResponseWriter, r *http.Request) {
+	user := middleware.GetUser(r.Context())
+	if user == nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	mode := r.URL.Query().Get("mode")
+
+	shares, err := h.expenseShareStore.GetExpensesByUserID(user.ID)
+	if err != nil {
+		http.Error(w, "Failed to load expenses", 500)
+		return
+	}
+
+	var labels []string
+	var values []float64
+
+	var unpaidShares []store.ExpenseShare
+	for _, s := range shares {
+		if !s.Paid {
+			unpaidShares = append(unpaidShares, s)
+		}
+	}
+
+	switch mode {
+	case "household":
+		labels, values = sumByHousehold(unpaidShares)
+	case "category":
+		labels, values = sumByCategory(unpaidShares)
+	case "status":
+		labels, values = sumByStatus(shares) // nowa funkcja
+	default:
+		http.Error(w, "Invalid mode", 400)
+		return
+	}
+
+	templ.ExpensesChart(labels, values).Render(r.Context(), w)
+}
+
+func sumByCategory(shares []store.ExpenseShare) ([]string, []float64) {
+	m := map[string]float64{}
+
+	for _, s := range shares {
+		m[string(s.Expense.Category)] += s.Amount
+	}
+
+	var labels []string
+	var values []float64
+	for k, v := range m {
+		labels = append(labels, k)
+		values = append(values, v)
+	}
+
+	return labels, values
+}
+
+func sumByHousehold(shares []store.ExpenseShare) ([]string, []float64) {
+	m := map[string]float64{}
+
+	for _, s := range shares {
+		m[s.Expense.Household.Name] += s.Amount
+	}
+
+	var labels []string
+	var values []float64
+	for k, v := range m {
+		labels = append(labels, k)
+		values = append(values, v)
+	}
+
+	return labels, values
+}
+
+func sumByStatus(shares []store.ExpenseShare) ([]string, []float64) {
+	var paid, unpaid float64
+	for _, s := range shares {
+		if s.Paid {
+			paid += s.Amount
+		} else {
+			unpaid += s.Amount
+		}
+	}
+	labels := []string{"Unpaid", "Paid"}
+	values := []float64{unpaid, paid}
+	return labels, values
 }
 
 type PostExpenseHandler struct {
@@ -170,4 +292,38 @@ func splitAmount(amount float64, membersCount int) []float64 {
 	}
 
 	return shares
+}
+
+type PostExpenseShareHandler struct {
+	expenseShareStore store.ExpenseShareStore
+}
+
+type PostExpenseShareHandlerParams struct {
+	ExpenseShareStore store.ExpenseShareStore
+}
+
+func NewPostExpenseShareHandler(params PostExpenseShareHandlerParams) *PostExpenseShareHandler {
+	return &PostExpenseShareHandler{
+		expenseShareStore: params.ExpenseShareStore,
+	}
+}
+
+func (h *PostExpenseShareHandler) PostPayExpenseShare(w http.ResponseWriter, r *http.Request) {
+	expenseIDStr := chi.URLParam(r, "id")
+	userIDStr := r.FormValue("user_id")
+
+	expenseID, _ := strconv.Atoi(expenseIDStr)
+	userID, _ := strconv.Atoi(userIDStr)
+
+	share, err := h.expenseShareStore.GetExpenseShare(uint(expenseID), uint(userID))
+	if err != nil {
+		http.Error(w, "Share not found", http.StatusNotFound)
+		return
+	}
+
+	share.Paid = true
+	_ = h.expenseShareStore.UpdateExpenseShare(share)
+
+	w.Header().Set("HX-Redirect", "/expenses")
+	w.WriteHeader(http.StatusOK)
 }
