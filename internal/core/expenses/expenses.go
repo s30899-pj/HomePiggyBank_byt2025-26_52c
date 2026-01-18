@@ -1,6 +1,7 @@
 package expenses
 
 import (
+	"fmt"
 	"log"
 	"math"
 	"net/http"
@@ -212,10 +213,25 @@ func (h *PostExpenseHandler) PostExpense(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	const (
+		maxExpenseNameLength = 40
+		minExpenseAmount     = 10.0
+	)
+
 	name := r.FormValue("name")
 	amountStr := r.FormValue("amount")
 	categoryStr := r.FormValue("category")
 	householdIDStr := r.FormValue("household_id")
+
+	if len(name) > maxExpenseNameLength {
+		w.WriteHeader(http.StatusBadRequest)
+		c := templAlerts.Error(
+			"Create failed",
+			fmt.Sprintf("Expense name cannot be longer than %d characters", maxExpenseNameLength),
+		)
+		c.Render(r.Context(), w)
+		return
+	}
 
 	nameBusy, err := h.expenseStore.NameExists(name)
 	if err != nil {
@@ -230,9 +246,31 @@ func (h *PostExpenseHandler) PostExpense(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	amount, err := strconv.ParseFloat(amountStr, 32)
-	if err != nil || amount <= 0 {
-		http.Error(w, "invalid amount", http.StatusBadRequest)
+	amount, err := strconv.ParseFloat(amountStr, 64)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		c := templAlerts.Error("Create failed", "Invalid amount format")
+		c.Render(r.Context(), w)
+		return
+	}
+
+	if amount < minExpenseAmount {
+		w.WriteHeader(http.StatusBadRequest)
+		c := templAlerts.Error(
+			"Create failed",
+			fmt.Sprintf("Amount must be at least %.2f", minExpenseAmount),
+		)
+		c.Render(r.Context(), w)
+		return
+	}
+
+	if math.Round(amount*100)/100 != amount {
+		w.WriteHeader(http.StatusBadRequest)
+		c := templAlerts.Error(
+			"Create failed",
+			"Amount can have at most 2 decimal places",
+		)
+		c.Render(r.Context(), w)
 		return
 	}
 

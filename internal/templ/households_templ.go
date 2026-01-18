@@ -148,7 +148,7 @@ func householdsList(households []store.Household) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if len(households) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<tr><td colspan=\"4\" class=\"p-4 text-center text-sm text-on-surface/70 dark:text-on-surface-dark/70\">No households found</td></tr>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<tr><td colspan=\"5\" class=\"p-4 align-middle text-center text-sm text-on-surface/70 dark:text-on-surface-dark/70\">No households found</td></tr>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

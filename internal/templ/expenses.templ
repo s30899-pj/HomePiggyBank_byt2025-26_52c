@@ -119,7 +119,13 @@ templ ExpensesChart(labels []string, values []float64) {
             const canvas = document.getElementById("expensesDonut");
             if (!canvas) return;
 
-            if (!labels || !labels.length) {
+            const hasAnyValue = Array.isArray(values) && values.some(v => Number(v) > 0);
+
+            if (
+                !Array.isArray(labels) ||
+                labels.length === 0 ||
+                !hasAnyValue
+            ) {
                 canvas.parentElement.innerHTML =
                     '<div class="flex items-center justify-center h-full text-sm opacity-60">No data available</div>';
                 return;

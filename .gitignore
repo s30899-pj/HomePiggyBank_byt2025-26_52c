@@ -8,6 +8,7 @@
 *.test
 *.out
 *.db
+*.log
 
 tailwindcss
 tailwindcss.exe

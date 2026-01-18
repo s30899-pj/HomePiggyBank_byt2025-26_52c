@@ -1,6 +1,7 @@
 package households
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -115,9 +116,41 @@ func (h *PostHouseholdHandler) PostHousehold(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+	const (
+		maxHouseholdNameLength        = 40
+		maxHouseholdDescriptionLength = 100
+	)
+
 	name := r.FormValue("name")
 	description := r.FormValue("description")
 	memberUsernames := r.Form["members[]"]
+
+	if len(name) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		c := templAlerts.Error("Create failed", "Household name is required")
+		c.Render(r.Context(), w)
+		return
+	}
+
+	if len(name) > maxHouseholdNameLength {
+		w.WriteHeader(http.StatusBadRequest)
+		c := templAlerts.Error(
+			"Create failed",
+			fmt.Sprintf("Household name cannot be longer than %d characters", maxHouseholdNameLength),
+		)
+		c.Render(r.Context(), w)
+		return
+	}
+
+	if len(description) > maxHouseholdDescriptionLength {
+		w.WriteHeader(http.StatusBadRequest)
+		c := templAlerts.Error(
+			"Create failed",
+			fmt.Sprintf("Description cannot be longer than %d characters", maxHouseholdDescriptionLength),
+		)
+		c.Render(r.Context(), w)
+		return
+	}
 
 	nameBusy, err := h.householdStore.NameExists(name)
 	if err != nil {
