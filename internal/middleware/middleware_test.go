@@ -31,7 +31,7 @@ func TestAddUserToContext_InvalidSession(t *testing.T) {
 	sessionStore := &storemock.SessionStoreMock{}
 	sessionStore.
 		On("GetUserFromSession", "invalid", "1").
-		Return((*store.User)(nil), http.ErrNoCookie) // dowolny error
+		Return((*store.User)(nil), http.ErrNoCookie)
 
 	middleware := NewAuthMiddleware(sessionStore, "session")
 

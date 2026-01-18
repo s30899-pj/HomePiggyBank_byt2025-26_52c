@@ -121,7 +121,7 @@ func (h *GetExpensesChartHandler) GetExpensesChart(w http.ResponseWriter, r *htt
 	case "category":
 		labels, values = sumByCategory(unpaidShares)
 	case "status":
-		labels, values = sumByStatus(shares) // nowa funkcja
+		labels, values = sumByStatus(shares)
 	default:
 		http.Error(w, "Invalid mode", 400)
 		return
