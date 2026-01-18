@@ -1,14 +1,15 @@
 # HomePiggyBank
-HomePiggyBank to lekka aplikacja webowa, działająca w przeglądarce — nie wymaga instalacji. 
+HomePiggyBank to lekka aplikacja webowa, działająca w przeglądarce. 
 
-Projekt na ten moment rozważany jest w wariancie technicznym: 
+Projekt został wykonany jest w wariancie technicznym: 
 
-## SSR z użyciem:
+## SSR/SPA z użyciem:
 - Go, 
 - Templ,
 - Htmx,
 - Alpine.js
 - Tailwind CSS,
+- Chart.js
 
-Niezależnie od ostatecznej decyzji, aplikacja będzie działać szybko, responsywnie, bezpiecznie i łatwo ją będzie można uruchomić lokalnie. 
-Nie wymaga integracji z bankami — wszystkie dane finansowe są prywatne i szyfrowane. 
+Aplikacja działa szybko, responsywnie, bezpiecznie i łatwo ją można uruchomić lokalnie. 
+Nie wymaga integracji z bankami — wszystkie dane finansowe są prywatne i szyfrowane lokalnie. 
